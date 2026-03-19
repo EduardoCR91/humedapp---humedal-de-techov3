@@ -13,6 +13,7 @@ import AuthScreen from './components/AuthScreen';
 import UserProfilePanel from './components/UserProfilePanel';
 import { Menu } from 'lucide-react';
 import { NotificationProvider } from './components/NotificationContext';
+import bgWetland from './imagenes/Comunitaria.jpg';
 
 const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.HOME);
@@ -39,10 +40,18 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-950 via-emerald-900 to-sky-700 safe-area-bottom pb-20">
-      <main className="max-w-md mx-auto min-h-screen bg-white/95 backdrop-blur-sm shadow-2xl relative overflow-x-hidden border border-emerald-900/10">
+    <div className="min-h-screen bg-[#f0f4f0] safe-area-bottom pb-20">
+      <main
+        className="max-w-md mx-auto min-h-screen relative overflow-x-hidden shadow-2xl rounded-none border border-emerald-900/20 bg-cover bg-center"
+        style={{
+          backgroundImage: `linear-gradient(to bottom, rgba(129, 208, 187, 0.92), rgba(101, 177, 220, 0.9)), url(${bgWetland})`,
+        }}
+      >
         {user && (
-          <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 pt-4 pointer-events-none">
+          <div
+            className="absolute left-0 right-0 z-30 flex items-center justify-between px-4 pt-4 pointer-events-none"
+            style={{ top: 'env(safe-area-inset-top, 0px)' }}
+          >
             <div className="pointer-events-auto bg-white/90 px-3 py-1.5 rounded-full shadow-sm border border-emerald-100">
               <span className="text-sm font-bold text-emerald-800 tracking-tight">EcoVigia!</span>
             </div>
@@ -57,7 +66,7 @@ const AppContent: React.FC = () => {
             </button>
           </div>
         )}
-        <div className={user ? 'pt-14' : ''}>
+        <div className={user ? 'pt-16' : ''}>
           {loading ? (
             <div className="p-6 text-center text-gray-500 text-sm">Cargando sesión...</div>
           ) : (

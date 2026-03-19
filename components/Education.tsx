@@ -297,7 +297,7 @@ const Education: React.FC = () => {
       <section className="mt-2">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-bold text-emerald-900 flex items-center gap-2">
-            <CalendarDays size={20} className="text-emerald-600" />
+            <CalendarDays size={20} className="text-black" />
             Eventos de Educación Ambiental
           </h3>
         </div>

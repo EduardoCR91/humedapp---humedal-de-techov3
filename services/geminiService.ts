@@ -3,11 +3,22 @@ import { GoogleGenAI } from "@google/genai";
 
 /**
  * Service to interact with Gemini API for EcoBot.
+ * The API key must be provided via Vite env: VITE_GEMINI_API_KEY
  */
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+
+const ai = apiKey
+  ? new GoogleGenAI({ apiKey })
+  : null;
 
 export const getGeminiResponse = async (prompt: string, lang: 'es' | 'en') => {
   try {
+    if (!ai) {
+      console.error('Gemini API key is not configured. Set VITE_GEMINI_API_KEY in your environment.');
+      return lang === 'en'
+        ? 'EcoBot is temporarily unavailable because the AI service is not configured.'
+        : 'EcoBot está temporalmente no disponible porque el servicio de IA no está configurado.';
+    }
     const languageLabel = lang === 'en' ? 'INGLÉS' : 'ESPAÑOL';
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -41,6 +52,10 @@ Si te preguntan algo fuera del contexto de humedales o Bogotá, responde muy bre
  */
 export const getWetlandWeather = async () => {
   try {
+    if (!ai) {
+      console.warn('Weather service: Gemini API key is not configured.');
+      return null;
+    }
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: "Proporciona el clima actual aproximado en el Humedal de Techo, Bogotá: temperatura en °C, humedad en % y velocidad del viento en km/h. Responde únicamente en formato JSON con estas llaves: temp, humidity, wind.",

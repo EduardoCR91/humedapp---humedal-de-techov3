@@ -2,6 +2,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Camera, MapPin, PlusCircle, AlertTriangle, X, Check, Bell, ShieldAlert, CloudSun, Wind, RefreshCw, Calendar, Share2, BarChart3, LayoutGrid, List, ChevronDown, ChevronUp, Eye, Trash2, Navigation2, Crosshair, TrendingUp, PieChart as PieChartIcon, Bird, Leaf, Edit2, Plus, Minus } from 'lucide-react';
 import L from 'leaflet';
+import { Capacitor } from '@capacitor/core';
+// Para app nativa, usar el plugin de Geolocation de Capacitor
+// Recuerda instalarlo y sincronizar Android:
+// npm install @capacitor/geolocation
+// npx cap sync android
+import { Geolocation } from '@capacitor/geolocation';
 import { useMonitoringViewModel } from '../useMonitoringViewModel';
 import { useAuth } from './AuthContext';
 import { supabase } from '../services/supabaseClient';
@@ -39,6 +45,36 @@ const Monitoring: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingReportId, setEditingReportId] = useState<number | null>(null);
 
+  // Helper para obtener la ubicación tanto en web como en app nativa
+  const getCurrentCoords = async (): Promise<[number, number] | null> => {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        const perm = await Geolocation.checkPermissions();
+        if (perm.location === 'denied' || perm.location === 'prompt') {
+          await Geolocation.requestPermissions();
+        }
+        const pos = await Geolocation.getCurrentPosition({
+          enableHighAccuracy: true,
+        });
+        return [pos.coords.latitude, pos.coords.longitude];
+      }
+
+      if ('geolocation' in navigator) {
+        return await new Promise<[number, number]>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve([pos.coords.latitude, pos.coords.longitude]),
+            (err) => reject(err),
+            { enableHighAccuracy: true, timeout: 10000 }
+          );
+        });
+      }
+      return null;
+    } catch (err) {
+      console.warn('Error al obtener ubicación', err);
+      return null;
+    }
+  };
+
   useEffect(() => {
     vm.fetchWeather();
     if (!mapContainerRef.current || mapInstanceRef.current) return;
@@ -63,19 +99,16 @@ const Monitoring: React.FC = () => {
       }).addTo(map);
     });
 
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const coords: [number, number] = [pos.coords.latitude, pos.coords.longitude];
-          vm.setUserCoords(coords);
-          if (mapInstanceRef.current) {
-            mapInstanceRef.current.setView(coords, 17);
-          }
-        },
-        (err) => console.warn("Error de geolocalización inicial.", err),
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
-    }
+    // Intentar centrar el mapa en la ubicación del usuario (web o app nativa)
+    getCurrentCoords()
+      .then((coords) => {
+        if (!coords) return;
+        vm.setUserCoords(coords);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.setView(coords, 17);
+        }
+      })
+      .catch((err) => console.warn('Error de geolocalización inicial.', err));
 
     return () => { 
       if (mapInstanceRef.current) {
@@ -162,13 +195,18 @@ const Monitoring: React.FC = () => {
     });
   }, [vm.filteredReports]);
 
-  const handleLocate = () => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(pos => {
-      const coords: [number, number] = [pos.coords.latitude, pos.coords.longitude];
-      vm.setUserCoords(coords);
-      mapInstanceRef.current?.setView(coords, 17);
-    }, (err) => alert("No se pudo obtener la ubicación."), { enableHighAccuracy: true });
+  const handleLocate = async () => {
+    const coords = await getCurrentCoords();
+    if (!coords) {
+      alert(
+        lang === 'en'
+          ? 'Location is not available. Please check GPS permissions on your device.'
+          : 'La ubicación no está disponible. Revisa los permisos de GPS en tu dispositivo.'
+      );
+      return;
+    }
+    vm.setUserCoords(coords);
+    mapInstanceRef.current?.setView(coords, 17);
   };
 
   const handleZoomIn = () => {
@@ -470,12 +508,12 @@ const Monitoring: React.FC = () => {
       <section className="mb-6 animate-fadeIn">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-bold text-emerald-900 flex items-center gap-2">
-            <BarChart3 size={20} className="text-emerald-600" />
+            <BarChart3 size={20} className="text-emerald-900" />
             {lang === 'en' ? 'Distribution of reports' : 'Distribución de Reportes'}
           </h3>
           <button 
             onClick={() => setShowStats(!showStats)} 
-            className="text-xs font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1"
+            className="text-xs font-bold text-emerald-900 uppercase tracking-widest flex items-center gap-1"
           >
             {showStats ? <ChevronUp size={14}/> : <ChevronDown size={14}/>}
             {showStats ? (lang === 'en' ? 'Hide': 'Ocultar') : (lang === 'en' ? 'Show' : 'Ver Detalle')}
@@ -544,21 +582,21 @@ const Monitoring: React.FC = () => {
             <button
               onClick={() => setPage(0)}
               disabled={page === 0}
-              className="text-[11px] font-semibold text-emerald-700 disabled:text-gray-300"
+              className="text-[11px] font-semibold text-font-black disabled:text-font-black"
             >
               {lang === 'en' ? 'Latest reports' : 'Últimos reportes'}
             </button>
             <button
               onClick={() => canPrev && setPage(p => p - 1)}
               disabled={!canPrev}
-              className="px-3 py-1 rounded-full text-[11px] border border-emerald-100 text-emerald-700 disabled:text-gray-300 disabled:border-gray-200"
+              className="px-3 py-1 rounded-full text-[11px] border border-emerald-100 text-font-black disabled:text-font-black disabled:border-gray-200"
             >{lang === 'en' ? 'Previous' : 'Anterior'}
               
             </button>
             <button
               onClick={() => canNext && setPage(p => p + 1)}
               disabled={!canNext}
-              className="px-3 py-1 rounded-full text-[11px] border border-emerald-100 text-emerald-700 disabled:text-gray-300 disabled:border-gray-200"
+              className="px-3 py-1 rounded-full text-[11px] border border-emerald-100 text-font-black disabled:text-gray-300 disabled:border-gray-200"
             >{lang === 'en' ? 'Next' : 'Siguiente'}
               
             </button>

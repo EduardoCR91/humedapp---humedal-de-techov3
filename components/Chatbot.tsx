@@ -34,29 +34,51 @@ const Chatbot: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await getGeminiResponse(userText, lang === 'en' ? 'en' : 'es');
-      setMessages(prev => [
-        ...prev,
-        {
-          role: 'bot',
-          text:
-            response ||
-            (lang === 'en'
-              ? 'I could not get an answer.'
-              : 'No pude obtener una respuesta.'),
-        },
-      ]);
+      let response = await getGeminiResponse(userText, lang === 'en' ? 'en' : 'es');
+
+      // Si el servicio de IA no está disponible o la respuesta viene vacía,
+      // usamos una respuesta local sencilla para que el chatbot siempre funcione.
+      if (
+        !response ||
+        response.includes('no disponible porque el servicio de IA no está configurado') ||
+        response.includes('unavailable because the AI service is not configured')
+      ) {
+        response =
+          lang === 'en'
+            ? `ECOBOT – ANSWER SUMMARY
+
+• I am not connected to the AI service right now, but I can give you general guidance.
+• Remember that the Techo Wetland is an ecosystem with birds, plants, amphibians and insects that needs our care.
+• You can use the app modules (Monitoring, Education, Community and Memory) to explore more information and report what you see.
+
+Remember: every report and question you make helps to protect the wetland.`
+            : `ECOBOT – RESUMEN DE RESPUESTA
+
+• En este momento no estoy conectado al servicio de IA, pero puedo darte una orientación general.
+• Recuerda que el Humedal de Techo es un ecosistema con aves, plantas, anfibios e insectos que necesita nuestro cuidado.
+• Puedes usar los módulos de la app (Monitoreo, Educación, Comunidad y Memoria) para explorar más información y reportar lo que observas.
+
+Recuerda: cada reporte y cada pregunta que haces ayuda a proteger el humedal.`;
+      }
+
+      setMessages(prev => [...prev, { role: 'bot', text: response }]);
     } catch (error) {
-      setMessages(prev => [
-        ...prev,
-        {
-          role: 'bot',
-          text:
-            lang === 'en'
-              ? 'Error connecting to the digital nature.'
-              : 'Error al conectar con la naturaleza digital.',
-        },
-      ]);
+      const fallback =
+        lang === 'en'
+          ? `ECOBOT – ANSWER SUMMARY
+
+• I could not contact the AI service, but here is a general tip.
+• The Techo Wetland is a fragile ecosystem. Avoid leaving trash, respect the fauna and follow the recommended trails.
+
+Remember: small actions from citizens help keep the wetland alive.`
+          : `ECOBOT – RESUMEN DE RESPUESTA
+
+• No pude contactar el servicio de IA, pero aquí tienes una recomendación general.
+• El Humedal de Techo es un ecosistema frágil: evita dejar basura, respeta la fauna y sigue los senderos recomendados.
+
+Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el humedal.`;
+
+      setMessages(prev => [...prev, { role: 'bot', text: fallback }]);
     } finally {
       setLoading(false);
     }
