@@ -31,6 +31,7 @@ export const useParticipationViewModel = () => {
   const [topReport, setTopReport] = useState<{ title: string; likes: number } | null>(null);
   const [profileUsername, setProfileUsername] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [likedPostIds, setLikedPostIds] = useState<string[]>([]);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -46,22 +47,21 @@ export const useParticipationViewModel = () => {
         let totalLikes = 0;
         let best: { title: string; likes: number } | null = null;
 
-        if (data.username) {
-          const { data: reportsData, error: reportsError } = await supabase
-            .from('reports')
-            .select('title, likes_count')
-            .eq('reporter_username', data.username);
+        // Estadísticas basadas en las publicaciones de comunidad del usuario actual
+        const { data: postsData, error: postsError } = await supabase
+          .from('community_queries')
+          .select('text, likes_count')
+          .eq('user_id', authUser.id);
 
-          if (!reportsError && reportsData) {
-            reportsCount = reportsData.length;
-            reportsData.forEach((r: any) => {
-              const likes = r.likes_count ?? 0;
-              totalLikes += likes;
-              if (!best || likes > best.likes) {
-                best = { title: r.title, likes };
-              }
-            });
-          }
+        if (!postsError && postsData) {
+          reportsCount = postsData.length;
+          postsData.forEach((p: any) => {
+            const likes = p.likes_count ?? 0;
+            totalLikes += likes;
+            if (!best || likes > best.likes) {
+              best = { title: p.text as string, likes };
+            }
+          });
         }
 
         const username = data.username || (authUser.email?.split('@')[0] ?? '');
@@ -88,6 +88,27 @@ export const useParticipationViewModel = () => {
     loadProfile().catch(err => {
       console.error('Error cargando perfil de comunidad:', err);
     });
+  }, [authUser]);
+
+  // Cargar desde localStorage los posts que el usuario ya ha marcado con like
+  useEffect(() => {
+    if (!authUser) {
+      setLikedPostIds([]);
+      return;
+    }
+    try {
+      const raw = window.localStorage.getItem(
+        `ecovigia_community_likes_${authUser.id}`
+      );
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setLikedPostIds(parsed);
+        }
+      }
+    } catch {
+      // ignorar errores de lectura
+    }
   }, [authUser]);
 
   const updateProfile = (data: Partial<UserProfile>) => {
@@ -150,36 +171,100 @@ export const useParticipationViewModel = () => {
     return sorted.slice(0, 15);
   }, [posts, sortMode]);
 
-  const toggleLike = (id: string) => {
+  // Sincroniza la marca de "hasLiked" con lo que tengamos guardado en localStorage.
+  // Se ejecuta cuando cambian los likes guardados o cuando ya hay posts cargados.
+  useEffect(() => {
+    if (!authUser) return;
+    if (!posts.length || !likedPostIds.length) return;
+
     setPosts(prev => {
-      const updated = prev.map(p =>
-        p.id === id
-          ? {
-              ...p,
-              likes: p.hasLiked ? p.likes - 1 : p.likes + 1,
-              hasLiked: !p.hasLiked,
-            }
-          : p
-      );
-
-      const target = updated.find(p => p.id === id);
-      if (target) {
-        supabase
-          .from('community_queries')
-          .update({ likes_count: target.likes })
-          .eq('id', target.id)
-          .then(({ error }) => {
-            if (error) {
-              console.error('Error actualizando likes de comunidad:', error.message);
-            }
-          })
-          .catch(err => {
-            console.error('Error inesperado actualizando likes de comunidad:', err);
-          });
-      }
-
-      return updated;
+      let changed = false;
+      const updated = prev.map(p => {
+        const shouldBeLiked = likedPostIds.includes(p.id);
+        if (p.hasLiked !== shouldBeLiked) {
+          changed = true;
+          return { ...p, hasLiked: shouldBeLiked };
+        }
+        return p;
+      });
+      return changed ? updated : prev;
     });
+  }, [authUser, likedPostIds, posts.length]);
+
+  const toggleLike = (id: string) => {
+    if (!authUser) return;
+
+    // Fotografía del estado actual para calcular cambios
+    const current = posts.find(p => p.id === id);
+    if (!current) return;
+
+    const nextHasLiked = !current.hasLiked;
+    const delta = nextHasLiked ? 1 : -1;
+    const nextLikes = current.likes + delta;
+
+    // Actualizar lista de posts en memoria
+    setPosts(prev =>
+      prev.map(p =>
+        p.id === id ? { ...p, hasLiked: nextHasLiked, likes: nextLikes } : p
+      )
+    );
+
+    // Sincronizar contador de likes en Supabase
+    supabase
+      .from('community_queries')
+      .update({ likes_count: nextLikes })
+      .eq('id', id)
+      .then(({ error }) => {
+        if (error) {
+          console.error('Error actualizando likes de comunidad:', error.message);
+        }
+      })
+      .catch(err => {
+        console.error('Error inesperado actualizando likes de comunidad:', err);
+      });
+
+    // Actualizar memoria local de likes por usuario (para no permitir múltiples likes)
+    setLikedPostIds(prevIds => {
+      const set = new Set(prevIds);
+      if (nextHasLiked) {
+        set.add(id);
+      } else {
+        set.delete(id);
+      }
+      const arr = Array.from(set);
+      try {
+        window.localStorage.setItem(
+          `ecovigia_community_likes_${authUser.id}`,
+          JSON.stringify(arr)
+        );
+      } catch {
+        // ignorar errores de almacenamiento
+      }
+      return arr;
+    });
+
+    // Si el post es del usuario actual, ajustar estadísticas del perfil en memoria
+    if (current.ownerId === authUser.id) {
+      const updatedPosts = posts.map(p =>
+        p.id === id ? { ...p, hasLiked: nextHasLiked, likes: nextLikes } : p
+      );
+      const ownPosts = updatedPosts.filter(p => p.ownerId === authUser.id);
+      const reportsCount = ownPosts.length;
+      let totalLikes = 0;
+      let best: { title: string; likes: number } | null = null;
+      ownPosts.forEach(p => {
+        totalLikes += p.likes;
+        if (!best || p.likes > best.likes) {
+          best = { title: p.text, likes: p.likes };
+        }
+      });
+      setProfile(prev => ({
+        ...prev,
+        reportsCount,
+        points: totalLikes,
+      }));
+      setTopReport(best);
+    }
   };
 
   const addPost = (displayName: string, text: string) => {

@@ -49,21 +49,31 @@ const AppContent: React.FC = () => {
       >
         {user && (
           <div
-            className="absolute left-0 right-0 z-30 flex items-center justify-between px-4 pt-4 pointer-events-none"
+            className="absolute left-0 right-0 z-30 px-4 pt-4 pointer-events-none"
             style={{ top: 'env(safe-area-inset-top, 0px)' }}
           >
-            <div className="pointer-events-auto bg-white/90 px-3 py-1.5 rounded-full shadow-sm border border-emerald-100">
-              <span className="text-sm font-bold text-emerald-800 tracking-tight">EcoVigia!</span>
+            <div className="w-full flex items-center justify-between gap-3">
+              <div className="pointer-events-auto bg-white/90 px-3 py-1.5 rounded-full shadow-sm border border-emerald-100 flex items-center gap-2">
+                <span className="text-sm font-bold text-emerald-800 tracking-tight">
+                  EcoVigia!
+                </span>
+                <span className="w-px h-5 bg-emerald-100" />
+                <img
+                  src="/Logo-Pagina-Uniagustiniana.webp"
+                  alt="Universidad Uniagustiniana"
+                  className="h-6 md:h-7 object-contain"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowProfilePanel(true)}
+                className="pointer-events-auto bg-white/90 backdrop-blur border border-emerald-100 shadow-md w-9 h-9 rounded-full flex items-center justify-center text-emerald-700 active:scale-95 transition-transform"
+                aria-label="Abrir menú de perfil"
+                disabled={loading || !user}
+              >
+                <Menu size={18} />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowProfilePanel(true)}
-              className="pointer-events-auto bg-white/90 backdrop-blur border border-emerald-100 shadow-md w-9 h-9 rounded-full flex items-center justify-center text-emerald-700 active:scale-95 transition-transform"
-              aria-label="Abrir menú de perfil"
-              disabled={loading || !user}
-            >
-              <Menu size={18} />
-            </button>
           </div>
         )}
         <div className={user ? 'pt-16' : ''}>

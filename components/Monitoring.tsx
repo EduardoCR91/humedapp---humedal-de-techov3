@@ -505,10 +505,10 @@ const Monitoring: React.FC = () => {
         )}
       </div>
 
-      <section className="mb-6 animate-fadeIn">
+      <section className="mb-6 animate-fadeIn text-black">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-bold text-emerald-900 flex items-center gap-2">
-            <BarChart3 size={20} className="text-emerald-900" />
+          <h3 className="text-lg font-bold text-black flex items-center gap-2">
+            <BarChart3 size={20} className="text-black" />
             {lang === 'en' ? 'Distribution of reports' : 'Distribución de Reportes'}
           </h3>
           <button 

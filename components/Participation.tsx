@@ -15,9 +15,9 @@ const Participation: React.FC = () => {
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
 
   const renderFeed = () => (
-    <div className="animate-fadeIn">
+    <div className="animate-fadeIn text-black">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-emerald-900">
+        <h2 className="text-2xl font-bold text-black">
           {lang === 'en' ? 'Community' : 'Comunidad'}
         </h2>
         <button onClick={() => vm.setView('profile')} className="flex items-center gap-2 bg-white p-1.5 pr-3 rounded-full border shadow-sm">
@@ -34,7 +34,7 @@ const Participation: React.FC = () => {
               : 'Estás sin conexión. Solo puedes leer las consultas que ya se hayan cargado; publicar, editar o dar like requiere conexión.'}
           </p>
         )}
-        <p className="text-xs text-gray-500 mb-2">
+        <p className="text-xs text-black mb-2">
           {lang === 'en'
             ? 'Share questions or reflections about the wetland and see the most recent or highlighted ones by the community.'
             : 'Comparte consultas o reflexiones sobre el humedal y ve las más recientes o destacadas por la comunidad.'}

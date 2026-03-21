@@ -96,19 +96,19 @@ const Culture: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
 
   return (
-    <div className="p-4 animate-fadeIn pb-24">
-      <h2 className="text-2xl font-bold text-emerald-900 mb-4">
+    <div className="p-4 animate-fadeIn pb-24 text-black">
+      <h2 className="text-2xl font-bold text-black mb-4">
         {lang === 'en' ? 'Culture and Memory' : 'Cultura y Memoria'}
       </h2>
       
-      <p className="text-sm text-emerald-800 bg-emerald-50 p-4 rounded-2xl mb-6 leading-relaxed">
+      <p className="text-sm text-black bg-emerald-50 p-4 rounded-2xl mb-6 leading-relaxed">
         {lang === 'en'
           ? 'The Techo Wetland is a sacred place full of history. Here we remember the stories of our ancestors and the evolution of the ecosystem.'
           : 'El Humedal de Techo es un espacio sagrado y cargado de historia. Aquí recuperamos las historias de nuestros ancestros y la evolución del ecosistema.'}
       </p>
 
       <section className="mb-8">
-        <h3 className="text-lg font-bold text-emerald-900 mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
           <History size={20} />
           {lang === 'en' ? 'Timeline' : 'Línea del Tiempo'}
         </h3>

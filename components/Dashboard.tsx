@@ -310,10 +310,10 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-4 animate-fadeIn">
+    <div className="flex flex-col gap-6 p-4 animate-fadeIn text-black">
       <header className="flex flex-col gap-1">
-        <h1 className="text-3xl font-bold text-emerald-900">EcoVigia!</h1>
-        <p className="text-emerald-700">
+        <h1 className="text-3xl font-bold text-black">EcoVigia!</h1>
+        <p className="text-black">
           {lang === 'en'
             ? 'Explore and protect the Techo Wetland'
             : 'Explora y protege el Humedal de Techo'}

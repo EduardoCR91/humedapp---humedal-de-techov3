@@ -17,9 +17,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const ensureProfile = async (u: User) => {
+      try {
+        const { data, error, status } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', u.id)
+          .maybeSingle();
+
+        if ((!data && status !== 406) || error) {
+          // Si hay otro tipo de error, solo lo registramos en consola
+          console.warn('Error verificando perfil de usuario:', error);
+          return;
+        }
+
+        if (!data) {
+          const suggestedUsername =
+            (u.user_metadata as any)?.username ||
+            (u.email || '').split('@')[0] ||
+            'guardian_humedal';
+
+          await supabase.from('profiles').insert({
+            id: u.id,
+            username: suggestedUsername,
+            display_name: suggestedUsername,
+          });
+        }
+      } catch (err) {
+        console.warn('No se pudo asegurar el perfil del usuario:', err);
+      }
+    };
+
     const init = async () => {
       const { data } = await supabase.auth.getSession();
-      setUser(data.session?.user ?? null);
+      const currentUser = data.session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        await ensureProfile(currentUser);
+      }
       setLoading(false);
     };
 
@@ -28,7 +63,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) {
+        // No esperamos aquí para no bloquear el cambio de estado
+        ensureProfile(u);
+      }
     });
 
     return () => {
@@ -43,21 +83,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string, username: string) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return { error: error.message };
-
-    const userId = data.user?.id;
-    if (userId) {
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: userId,
-        username,
-        display_name: username,
-        email,
-      });
-      if (profileError) {
-        return { error: profileError.message };
-      }
+    const cleanUsername = username.trim();
+    if (!cleanUsername) {
+      return { error: 'USERNAME_REQUIRED' };
     }
+
+    // Comprobación rápida de que el nombre de usuario no exista ya en perfiles.
+    // Si las políticas RLS no lo permiten, simplemente continuamos sin bloquear el registro.
+    try {
+      const { data: existing, error: usernameError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', cleanUsername)
+        .maybeSingle();
+
+      if (!usernameError && existing) {
+        return { error: 'USERNAME_TAKEN' };
+      }
+    } catch (err) {
+      console.warn('No se pudo verificar la unicidad del nombre de usuario:', err);
+    }
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username: cleanUsername },
+      },
+    });
+    if (error) return { error: error.message };
 
     return {};
   };

@@ -25,7 +25,49 @@ const AuthScreen: React.FC = () => {
         : await signUp(email, password, username);
 
     if (err) {
-      setError(err);
+      let friendly = err;
+      if (mode === 'register') {
+        if (err === 'USERNAME_TAKEN') {
+          friendly =
+            lang === 'en'
+              ? 'This username is already in use. Please choose a different one.'
+              : 'Este nombre de usuario ya está en uso. Por favor, elige uno diferente.';
+        } else if (err === 'USERNAME_REQUIRED') {
+          friendly =
+            lang === 'en'
+              ? 'Please choose a username to create your account.'
+              : 'Por favor elige un nombre de usuario para crear tu cuenta.';
+        } else {
+          const lower = err.toLowerCase();
+
+          // Caso 1: el correo ya existe
+          if (lower.includes('already registered') || lower.includes('already exists')) {
+            friendly =
+              lang === 'en'
+                ? 'This email is already registered. Please sign in instead.'
+                : 'Este correo ya se encuentra registrado. Por favor, inicia sesión.';
+          }
+          // Caso 2: muchos intentos de registro seguidos
+          else if (lower.includes('rate limit')) {
+            friendly =
+              lang === 'en'
+                ? 'There have been too many registration attempts. Please wait a few minutes before trying again.'
+                : 'Se han realizado demasiados intentos de registro. Espera unos minutos antes de intentarlo de nuevo.';
+          }
+          // Caso 3: problemas con el nombre de usuario (por ejemplo, ya está en uso) a partir de errores de Supabase
+          else if (
+            lower.includes('username') ||
+            lower.includes('user name') ||
+            lower.includes('duplicate key value')
+          ) {
+            friendly =
+              lang === 'en'
+                ? 'This username is already in use. Please choose a different one.'
+                : 'Este nombre de usuario ya está en uso. Por favor, elige uno diferente.';
+          }
+        }
+      }
+      setError(friendly);
     } else {
       if (mode === 'login') {
         setSuccess(
@@ -44,8 +86,8 @@ const AuthScreen: React.FC = () => {
   };
 
   return (
-    <div className="p-6 animate-fadeIn">
-      <h1 className="text-2xl font-bold text-emerald-900 mb-4">
+    <div className="p-6 animate-fadeIn text-black">
+      <h1 className="text-2xl font-bold text-black mb-4">
         {mode === 'login'
           ? lang === 'en'
             ? 'Sign in'

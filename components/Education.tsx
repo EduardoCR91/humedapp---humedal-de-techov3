@@ -240,8 +240,8 @@ const Education: React.FC = () => {
     .slice(0, 5);
 
   return (
-    <div className="p-4 animate-fadeIn pb-24">
-      <h2 className="text-2xl font-bold text-emerald-900 mb-4">Aprende y Protege</h2>
+    <div className="p-4 animate-fadeIn pb-24 text-black">
+      <h2 className="text-2xl font-bold text-black mb-4">Aprende y Protege</h2>
       
       {!isOnline && (
         <p className="mb-3 text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-2xl px-3 py-2">
@@ -296,7 +296,7 @@ const Education: React.FC = () => {
 
       <section className="mt-2">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-bold text-emerald-900 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-black flex items-center gap-2">
             <CalendarDays size={20} className="text-black" />
             Eventos de Educación Ambiental
           </h3>
