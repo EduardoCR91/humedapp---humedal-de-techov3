@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const { data, error, status } = await supabase
           .from('profiles')
-          .select('id')
+          .select('id, username, display_name')
           .eq('id', u.id)
           .maybeSingle();
 
@@ -31,17 +31,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        if (!data) {
-          const suggestedUsername =
-            (u.user_metadata as any)?.username ||
-            (u.email || '').split('@')[0] ||
-            'guardian_humedal';
+        const preferredUsername =
+          (u.user_metadata as any)?.username ||
+          (u.email || '').split('@')[0] ||
+          'guardian_humedal';
 
-          await supabase.from('profiles').insert({
-            id: u.id,
-            username: suggestedUsername,
-            display_name: suggestedUsername,
-          });
+        // Si no hay fila, la creamos; si la hay pero sin username/visible, la completamos.
+        if (!data) {
+          await supabase.from('profiles').upsert(
+            {
+              id: u.id,
+              username: preferredUsername,
+              display_name: preferredUsername,
+            },
+            { onConflict: 'id' }
+          );
+        } else {
+          const currentUsername = (data as any).username as string | null;
+          const currentDisplayName = (data as any).display_name as string | null;
+          if (!currentUsername || !currentDisplayName) {
+            await supabase
+              .from('profiles')
+              .update({
+                username: currentUsername || preferredUsername,
+                display_name: currentDisplayName || preferredUsername,
+              })
+              .eq('id', u.id);
+          }
         }
       } catch (err) {
         console.warn('No se pudo asegurar el perfil del usuario:', err);

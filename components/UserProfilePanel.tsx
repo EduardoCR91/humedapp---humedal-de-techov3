@@ -12,7 +12,6 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
   const { user, signOut } = useAuth();
   const { lang, setLang } = useLanguage();
   const [username, setUsername] = useState('');
-  const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -43,16 +42,18 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
         .single();
 
       if (!err && data) {
-        setUsername(data.username || '');
-        setDisplayName(data.display_name || '');
+        const fromProfile = data.username || data.display_name || '';
+        setUsername(fromProfile);
         if (data.role === 'admin') {
           setIsAdmin(true);
         }
       } else {
-        // fallback sin mostrar el correo completo
-        const suggested =
-          (user.email || '').split('@')[0] || 'Explorador del Techo';
-        setDisplayName(suggested);
+        // Fallback: usar el username guardado en metadata o el prefijo del correo
+        const metaUsername =
+          ((user.user_metadata as any)?.username as string | undefined) ||
+          (user.email || '').split('@')[0] ||
+          '';
+        setUsername(metaUsername);
       }
       setLoading(false);
     };
@@ -67,17 +68,38 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
     setMessage(null);
     setError(null);
 
-    const { error: upsertError } = await supabase.from('profiles').upsert(
-      {
-        id: user.id,
-        username: username || null,
-        display_name: displayName || null,
-      },
-      { onConflict: 'id' }
-    );
+    // Actualizar nombre de usuario en los metadatos de autenticación
+    try {
+      const { error: authError } = await supabase.auth.updateUser({
+        data: { username: username || null },
+      });
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+        return;
+      }
+    } catch (err: any) {
+      setError('No se pudo actualizar tu nombre de usuario. Intenta de nuevo.');
+      setLoading(false);
+      return;
+    }
+
+    // Intentar reflejarlo también en la tabla profiles (si las políticas lo permiten)
+    const { error: upsertError } = await supabase
+      .from('profiles')
+      .upsert(
+        {
+          id: user.id,
+          username: username || null,
+          display_name: username || null,
+        },
+        { onConflict: 'id' }
+      );
 
     if (upsertError) {
-      setError(upsertError.message);
+      console.warn('No se pudo guardar el perfil en profiles:', upsertError.message);
+      // Pero al menos los metadatos de auth ya quedaron actualizados
+      setMessage('Nombre de usuario actualizado (datos de acceso).');
     } else {
       setMessage('Perfil actualizado correctamente.');
     }
@@ -190,23 +212,11 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
         <form onSubmit={handleSave} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-gray-500 mb-1">
-              {lang === 'en' ? 'Display name' : 'Nombre visible'}
-            </label>
-            <input
-              type="text"
-              value={displayName}
-              onChange={e => setDisplayName(e.target.value)}
-              className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              placeholder="Ej: Guardián del Techo"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">
               {lang === 'en' ? 'Username' : 'Nombre de usuario'}
             </label>
             <input
               type="text"
+              required
               value={username}
               onChange={e => setUsername(e.target.value)}
               className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"

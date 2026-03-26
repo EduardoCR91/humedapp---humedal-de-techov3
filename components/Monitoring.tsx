@@ -127,16 +127,33 @@ const Monitoring: React.FC = () => {
       setLoadingProfile(true);
       const { data, error } = await supabase
         .from('profiles')
-        .select('username, role')
+        .select('username, display_name, role')
         .eq('id', user.id)
         .single();
+
       if (!error && data) {
-        if (data.username) {
-          setUsername(data.username as string);
+        const uname =
+          (data.username as string | null) ||
+          (data.display_name as string | null) ||
+          null;
+        if (uname) {
+          setUsername(uname);
+        } else {
+          const fallback =
+            ((user.user_metadata as any)?.username as string | undefined) ||
+            (user.email || '').split('@')[0] ||
+            null;
+          setUsername(fallback);
         }
-        if (data.role === 'admin') {
+        if ((data as any).role === 'admin') {
           setIsAdmin(true);
         }
+      } else {
+        const fallback =
+          ((user.user_metadata as any)?.username as string | undefined) ||
+          (user.email || '').split('@')[0] ||
+          null;
+        setUsername(fallback);
       }
       setLoadingProfile(false);
     };

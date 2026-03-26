@@ -64,11 +64,17 @@ export const useParticipationViewModel = () => {
           });
         }
 
-        const username = data.username || (authUser.email?.split('@')[0] ?? '');
+        const usernameFromProfile =
+          data.username || data.display_name || null;
+        const fallbackUsername =
+          (authUser.user_metadata as any)?.username ||
+          authUser.email?.split('@')[0] ||
+          '';
+        const username = usernameFromProfile || fallbackUsername;
 
         setProfile(prev => ({
           ...prev,
-          name: data.display_name || username || prev.name,
+          name: username || prev.name,
           avatar: data.username
             ? `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
                 data.username
@@ -82,6 +88,17 @@ export const useParticipationViewModel = () => {
         if (data.role === 'admin') {
           setIsAdmin(true);
         }
+      } else {
+        // Fallback si no se pudo leer profiles: usar metadatos o correo
+        const username =
+          (authUser.user_metadata as any)?.username ||
+          authUser.email?.split('@')[0] ||
+          '';
+        setProfile(prev => ({
+          ...prev,
+          name: username || prev.name,
+        }));
+        setProfileUsername(username || null);
       }
     };
 
