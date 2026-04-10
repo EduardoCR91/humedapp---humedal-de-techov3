@@ -1,41 +1,71 @@
-@startuml
-skinparam ActivityDiamondBackgroundColor #FFEBCD
-skinparam ActivityBackgroundColor #E0FFFF
+@startuml EcoVigia_Actividades_Compacto
 
-title Diagrama de Actividades (Flujo de Registro de Incidente Ecológico)
+skinparam activity {
+  BackgroundColor #EAF3DE
+  BorderColor #3B6D11
+  StartColor #1D9E75
+  EndColor #0F6E56
+  FontSize 11
+  FontName Arial
+}
+skinparam activityDiamond {
+  BackgroundColor #FAEEDA
+  BorderColor #854F0B
+  FontSize 11
+  FontName Arial
+}
+skinparam note {
+  BackgroundColor #E6F1FB
+  BorderColor #185FA5
+  FontSize 10
+}
+skinparam ArrowColor #3B6D11
+skinparam DefaultFontName Arial
+
+title EcoVigia — Flujo general de actividades
 
 start
 
-:Usuario ciudadano abre la aplicación;
-:Navega a la pestaña de "Monitoreo" (AppTab.MONITORING);
-
-if (¿Existe sesión activa en AuthContext?) then (Sí)
-else (No)
-  :Renderizar pantalla de Login (AuthScreen);
-  :El usuario introduce credenciales;
-  :Autorizar vía Supabase Auth;
+note right: **AUTH**
+if (¿Tiene sesión?) then (No)
+  :Login o registro\nvía Supabase Auth;
+else (Sí)
 endif
 
-:El sistema carga el lienzo geocartográfico (Leaflet);
-:Usuario pulsa el botón flotante "+";
-:Solicitud al sistema operativo de permisos nativos;
+note right: **HOME**
+:Cargar mapa, estadísticas\ny clima con Gemini AI;
 
-if (¿Permisos GPS y Cámara concedidos?) then (Sí)
-  :Abrir API nativa de cámara fotográfica;
-  :Usuario captura la evidencia física del daño o ave;
-  :Rellenar formulario descriptivo (Tipo, Nombre, Texto);
-  :El sistema empaqueta todo en objeto "EnvironmentalReport";
-  fork
-    :Sube imagen raw al bucket de Supabase Storage;
-  fork again
-    :Registra metadata y Coordenadas en PostgreSQL;
-  end fork
-  :Motor RLS de PostgreSQL asocia el reporte permanentemente al ID de Usuario;
-  :Acumular "Puntos de Guardián" en el Perfil de Usuario;
-  :Refrescar mapa e instanciar nuevo marcador visible para todos los ciudadanos;
+:Usuario selecciona una vista\ndel menú de navegación;
+
+note right: **MONITORING**
+if (¿Crear reporte?) then (Sí)
+  :Capturar foto y GPS\n→ guardar en Supabase;
 else (No)
-  :Renderizar notificación UI: "Permisos Denegados, imposible proceder";
+  :Filtrar y consultar\nreportes existentes;
 endif
 
-stop
+note right: **EDUCATION**
+:Explorar catálogo de especies\npor categoría o búsqueda;
+
+note right: **PARTICIPATION**
+if (¿Feed?) then (Sí)
+  :Publicar o dar like\nen comunidad;
+else (Perfil)
+  :Ver puntos, nivel\ny mejor publicación;
+endif
+
+note right: **CULTURE**
+:Explorar artículos,\neventos y galería del humedal;
+
+note right: **CHAT**
+:Enviar consulta a Gemini AI\ny recibir respuesta;
+
+if (¿Cerrar sesión?) then (Sí)
+  :Supabase cierra sesión;
+  stop
+else (No)
+  :Continuar navegando;
+  stop
+endif
+
 @enduml

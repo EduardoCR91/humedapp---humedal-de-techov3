@@ -1,54 +1,67 @@
 @startuml
-skinparam classAttributeIconSize 0
-skinparam monochrome true
+title Diagrama de Clases - Arquitectura EcoVigía
 
-title Diagrama de Clases - EcoVigia
-
-enum AppTab {
-  HOME
-  MONITORING
-  EDUCATION
-  PARTICIPATION
-  CULTURE
-  CHAT
+package "Views (UI Components)" {
+    class App {
+        - activeTab: AppTab
+        + render()
+    }
+    class Navigation {
+        + setActiveTab(tab)
+    }
+    class MonitoringView {
+        + vm: MonitoringViewModel
+        + renderMap()
+    }
+    class ParticipationView {
+        + vm: ParticipationViewModel
+        + renderFeed()
+        + renderProfile()
+    }
+    class ChatbotView {
+        + messages: Array
+        + handleSend()
+    }
 }
 
-interface Coordinates {
-  +lat: number
-  +lng: number
+package "ViewModels (Logic Hooks)" {
+    class useMonitoringViewModel {
+        + reports: Array
+        + weather: Object
+        + addReport(data)
+        + fetchWeather()
+    }
+    class useParticipationViewModel {
+        + posts: Array
+        + profile: Object
+        + updateProfile()
+    }
 }
 
-interface EnvironmentalReport {
-  +id: number
-  +type: string ("fauna"|"flora"|"emergency")
-  +title: string
-  +user: string
-  +date: string
-  +description: string
-  +timestamp: Date
-  +imageUrl: string
-  +remoteId?: string
-  +ownerId?: string
+package "Models & Services" {
+    class Report {
+        + id: number
+        + type: string
+        + coords: [number, number]
+        + imageUrl: string
+    }
+    class GeminiService {
+        + getGeminiResponse(prompt): string
+    }
+    class LeafletMap {
+        + setView()
+        + addMarker()
+    }
 }
 
-interface UserProfile {
-  +name: string
-  +bio: string
-  +avatar: string
-  +level: string
-  +reportsCount: number
-  +points: number
-}
+App "1" *-- "1" Navigation
+App "1" *-- "1" MonitoringView
+App "1" *-- "1" ParticipationView
+App "1" *-- "1" ChatbotView
 
-interface Species {
-  +id: string
-  +name: string
-  +scientificName: string
-  +category: string
-  +description: string
-  +imageUrl: string
-}
-
-EnvironmentalReport "*" --> "1" Coordinates : "Posee ubicación (lat, lng)"
-
+MonitoringView ..> useMonitoringViewModel : uses
+ParticipationView ..> useParticipationViewModel : uses
+ChatbotView ..> GeminiService : communicates
+useMonitoringViewModel "1" *-- "many" Report
+MonitoringView ..> LeafletMap : manages
 @enduml
