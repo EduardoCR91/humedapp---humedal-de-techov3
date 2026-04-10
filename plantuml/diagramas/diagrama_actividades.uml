@@ -1,0 +1,41 @@
+@startuml
+skinparam ActivityDiamondBackgroundColor #FFEBCD
+skinparam ActivityBackgroundColor #E0FFFF
+
+title Diagrama de Actividades (Flujo de Registro de Incidente Ecológico)
+
+start
+
+:Usuario ciudadano abre la aplicación;
+:Navega a la pestaña de "Monitoreo" (AppTab.MONITORING);
+
+if (¿Existe sesión activa en AuthContext?) then (Sí)
+else (No)
+  :Renderizar pantalla de Login (AuthScreen);
+  :El usuario introduce credenciales;
+  :Autorizar vía Supabase Auth;
+endif
+
+:El sistema carga el lienzo geocartográfico (Leaflet);
+:Usuario pulsa el botón flotante "+";
+:Solicitud al sistema operativo de permisos nativos;
+
+if (¿Permisos GPS y Cámara concedidos?) then (Sí)
+  :Abrir API nativa de cámara fotográfica;
+  :Usuario captura la evidencia física del daño o ave;
+  :Rellenar formulario descriptivo (Tipo, Nombre, Texto);
+  :El sistema empaqueta todo en objeto "EnvironmentalReport";
+  fork
+    :Sube imagen raw al bucket de Supabase Storage;
+  fork again
+    :Registra metadata y Coordenadas en PostgreSQL;
+  end fork
+  :Motor RLS de PostgreSQL asocia el reporte permanentemente al ID de Usuario;
+  :Acumular "Puntos de Guardián" en el Perfil de Usuario;
+  :Refrescar mapa e instanciar nuevo marcador visible para todos los ciudadanos;
+else (No)
+  :Renderizar notificación UI: "Permisos Denegados, imposible proceder";
+endif
+
+stop
+@enduml

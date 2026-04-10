@@ -1,0 +1,58 @@
+@startuml
+title Interfaces de Salida – Reportes, Consultas e Información (EcoVigia)
+
+skinparam rectangle {
+  BackgroundColor #FFFAF0
+  BorderColor #DD6B20
+}
+
+actor "Usuario\n(ciudadano o admin)" as Usuario
+
+package "App EcoVigia – Interfaces de Salida" {
+
+  rectangle "Inicio – Panel general" as InicioOut {
+    () "Tarjeta de clima\n(temperatura, humedad, viento)"
+    () "Tarjeta 'Biodiversidad local'"
+    () "Listado de noticias recientes\n(título, resumen, imagen)"
+  }
+
+  rectangle "Monitoreo – Mapa y listados" as MonitoreoOut {
+    () "Mapa interactivo con marcadores\npor tipo (Fauna / Flora / Riesgo)"
+    () "Lista paginada de reportes\n(5 por página, hasta 15)"
+    () "Detalle emergente del reporte:\nfoto, descripción, usuario, fecha"
+    () "Estadísticas: distribución de reportes\npor tipo (gráfico circular)"
+  }
+
+  rectangle "Comunidad – Consultas ciudadanas" as ComunidadOut {
+    () "Feed de publicaciones\n(autor, iniciales, texto, fecha)"
+    () "Contador de likes por publicación"
+    () "Filtros: Últimos / Destacados\n(más likes, máximo 15)"
+  }
+
+  rectangle "Educación – Aprende y Protege" as EducacionOut {
+    () "Tarjetas de temas\n(Aves, Plantas, Anfibios, Insectos)"
+    () "Ventanas emergentes con descripciones,\nemojis e información didáctica"
+    () "Listado de eventos ambientales\nFuturos (activo) y pasados (gris)"
+    () "\"No hay eventos\" con icono de garza\nsi no existen eventos próximos"
+  }
+
+  rectangle "Memoria – Línea de tiempo" as MemoriaOut {
+    () "Línea de tiempo con hitos\n(Territorio muisca, Hacienda, etc.)"
+    () "Ventana emergente con detalle\ntexto e iconos por momento histórico"
+  }
+
+  rectangle "Chatbot EcoBot" as ChatbotOut {
+    () "Mensajes generados por IA\n(resumenes, recomendaciones, datos)"
+    () "Respuestas multi‑idioma\n(español / inglés)"
+  }
+}
+
+Usuario <-- InicioOut : Visualiza noticias\ny clima del humedal
+Usuario <-- MonitoreoOut : Consulta reportes\nciudadanos y detalles
+Usuario <-- ComunidadOut : Lee consultas\ny popularidad (likes)
+Usuario <-- EducacionOut : Aprende sobre fauna,\nflora y eventos
+Usuario <-- MemoriaOut : Explora historia\ny memoria del humedal
+Usuario <-- ChatbotOut : Recibe orientación\nmediante IA
+
+@enduml
+

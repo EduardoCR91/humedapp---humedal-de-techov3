@@ -1,0 +1,54 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+
+title Diagrama de Clases - EcoVigia
+
+enum AppTab {
+  HOME
+  MONITORING
+  EDUCATION
+  PARTICIPATION
+  CULTURE
+  CHAT
+}
+
+interface Coordinates {
+  +lat: number
+  +lng: number
+}
+
+interface EnvironmentalReport {
+  +id: number
+  +type: string ("fauna"|"flora"|"emergency")
+  +title: string
+  +user: string
+  +date: string
+  +description: string
+  +timestamp: Date
+  +imageUrl: string
+  +remoteId?: string
+  +ownerId?: string
+}
+
+interface UserProfile {
+  +name: string
+  +bio: string
+  +avatar: string
+  +level: string
+  +reportsCount: number
+  +points: number
+}
+
+interface Species {
+  +id: string
+  +name: string
+  +scientificName: string
+  +category: string
+  +description: string
+  +imageUrl: string
+}
+
+EnvironmentalReport "*" --> "1" Coordinates : "Posee ubicación (lat, lng)"
+
+@enduml

@@ -1,0 +1,61 @@
+@startuml
+top to bottom direction
+skinparam componentStyle uml2
+skinparam padding 5
+skinparam nodesep 40
+skinparam ranksep 60
+
+title UML - Arquitectura General Vertical (HumedApp)
+
+actor "Usuario / Ciudadano" as User
+
+package "1. Interfaz de Usuario (App Móvil encapsulada en Capacitor)" {
+  [App Router / CentralState] as App
+  [AuthContext] as Auth
+}
+
+package "2. Vistas y Módulos (React)" {
+  [Dashboard (Inicio)] as ViewDashboard
+  [Monitoring (Mapa y Reportes)] as ViewMonitoring
+  [Education (Catálogo Biológico)] as ViewEducation
+  [Participation (Gamificación)] as ViewCommunity
+  [Culture (Memoria Humedal)] as ViewCulture
+  [Chatbot (Asistente Ecológico)] as ViewChat
+}
+
+package "3. Backend as a Service (Supabase)" {
+  [Autenticación] as SupabaseAuth
+  [PostgreSQL (Base de Datos)] as SupabaseDB
+  [Supabase Storage (Bóveda de Imágenes)] as SupabaseStorage
+}
+
+cloud "4. APIs Externas" {
+  [Leaflet / OpenStreetMap] as Maps
+  [Google Gemini API] as Gemini
+}
+
+' Flujo principal descendente
+User --> App : Interactúa con la UI
+
+App --> Auth : Verifica Sesión Activa
+Auth --> SupabaseAuth : Envía JWT Token (Login/Registro)
+
+' Distribución a las vistas
+App --> ViewDashboard
+App --> ViewMonitoring
+App --> ViewEducation
+App --> ViewCommunity
+App --> ViewCulture
+App --> ViewChat
+
+' Conexiones desde vistas al backend (Verticales)
+ViewMonitoring --> Maps : Renderiza Geocoordenadas
+ViewMonitoring --> SupabaseDB : CRUD (Reportes ambientales)
+ViewMonitoring --> SupabaseStorage : Sube archivos multimedia
+
+ViewCommunity --> SupabaseDB : Lee Perfiles y Actualiza Puntos
+ViewEducation --> SupabaseDB : Consulta Fichas Biológicas
+
+ViewChat --> Gemini : Prompts en Lenguaje Natural
+
+@enduml

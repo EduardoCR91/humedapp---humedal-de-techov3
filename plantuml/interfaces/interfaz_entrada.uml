@@ -1,0 +1,57 @@
+@startuml
+title Interfaces de Entrada – Formularios y Login (EcoVigia)
+
+skinparam rectangle {
+  BackgroundColor #F0F9FF
+  BorderColor #3182CE
+}
+
+actor "Usuario\n(ciudadano o admin)" as Usuario
+
+package "App EcoVigia – Formularios de Entrada" {
+
+  rectangle "AuthScreen\n(Login / Registro)" as Auth {
+    () "Campo correo electrónico"
+    () "Campo contraseña"
+    () "Campo nombre de usuario\n(único, obligatorio)"
+    () "Botones: Iniciar sesión /\nRegistrarse"
+  }
+
+  rectangle "Monitoreo\n(Nuevo reporte ciudadano)" as MonitoreoForm {
+    () "Selector tipo de reporte\n(Fauna / Flora / Riesgo)"
+    () "Campo título corto"
+    () "Campo descripción detallada"
+    () "Botón tomar foto\n( cámara / galería )"
+    () "Selección de punto en mapa\n(coordenadas GPS)"
+    () "Botón: Publicar reporte"
+  }
+
+  rectangle "Comunidad\n(Nueva consulta / publicación)" as ComunidadForm {
+    () "Área de texto consulta"
+    () "Botón: Publicar consulta"
+  }
+
+  rectangle "Educación – Eventos\n(Perfil administrador)" as EventosForm {
+    () "Campo título de evento"
+    () "Campo descripción"
+    () "Fecha y hora del evento"
+    () "Botón subir imagen opcional"
+    () "Botones: Crear / Editar / Eliminar"
+  }
+
+  rectangle "Inicio – Noticias\n(Perfil administrador)" as NoticiasForm {
+    () "Campo título noticia"
+    () "Campo resumen"
+    () "Botón tomar / subir imagen"
+    () "Botones: Publicar / Editar / Eliminar"
+  }
+}
+
+Usuario --> Auth : Ingresa credenciales\ny nombre de usuario
+Usuario --> MonitoreoForm : Registra\nnuevo reporte
+Usuario --> ComunidadForm : Escribe\nconsulta o aporte
+Usuario --> EventosForm : (Admin) crea\n/ edita eventos
+Usuario --> NoticiasForm : (Admin) gestiona\nnoticias
+
+@enduml
+

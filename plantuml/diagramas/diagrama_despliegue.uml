@@ -1,0 +1,54 @@
+@startuml
+
+title Diagrama de Despliegue e Infraestructura - EcoVigia
+
+node "Dispositivo Móvil Ciudadano" <<Android OS 7.0+>> {
+  
+  node "Capacitor Runtime Environment" <<Contenedor Nativo>> {
+    component "Módulo WebView (Navegador Embebido)" {
+      artifact "EcoVigia SPA\n(React / Vite Bundle)" as SPA
+    }
+  }
+
+  component "APIs Nativas del Dispositivo" {
+    [Motor GPS (Geolocalización)] as GPS
+    [Cámara Digital / Galería] as Camera
+  }
+  
+  SPA -.-> GPS : "Lee Coordenadas (JS Bridge)"
+  SPA -.-> Camera : "Inicia Captura Binaria"
+}
+
+cloud "Nube de Procesamiento Cognitivo (Google Cloud)" as GCP {
+  node "Google Vertex AI / Generative Language API" {
+     [Modelo Base: Gemini LLM] as LLM
+  }
+}
+
+cloud "Ecosistema Backend (Instancia Supabase - AWS)" as SupabasePlatform {
+  node "Supabase Gateway API (Kong)" as Kong
+  
+  node "Microservicios Internos" {
+    [GoTrue (Autenticación)] as GoTrue
+    [PostgREST (Data API)] as PostgREST
+    [Storage API] as StorageAPI
+  }
+
+  database "Bóveda de Datos" {
+    [PostgreSQL Cluster v15] as Postgres
+    [S3 Bucket - Archivos Físicos] as S3
+  }
+  
+  Kong --> GoTrue
+  Kong --> PostgREST
+  Kong --> StorageAPI
+  
+  GoTrue --> Postgres
+  PostgREST --> Postgres
+  StorageAPI --> S3
+}
+
+' Relaciones de Tráfico de Red (Externas)
+SPA ====> Kong : "Conexiones Asíncronas REST/WebSockets sobre HTTPS (TLS)"
+SPA ...> LLM : "Consultas vía REST SDK (@google/genai) vía HTTPS"
+@enduml

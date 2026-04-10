@@ -1,0 +1,47 @@
+@startuml
+title Interfaz de Usuario – Hardware, Software y Comunicaciones (EcoVigia)
+
+skinparam rectangle {
+  BackgroundColor #F8FFF8
+  BorderColor #2F855A
+}
+
+actor "Ciudadano / Administrador" as Usuario
+
+node "Dispositivo móvil\n(Android / iOS)" as Movil {
+  rectangle "App EcoVigia\n(React + Vite + Capacitor)" as App {
+    rectangle "Capa de Presentación\nPantallas: Inicio, Monitoreo,\nEducación, Comunidad, Memoria,\nChatbot, Perfil" as UI
+    rectangle "Capa de Lógica de UI\nContexts, ViewModels,\nValidaciones de formularios" as LogicaUI
+  }
+
+  node "Hardware" as HW {
+    rectangle "Pantalla táctil\n(Interacción visual)" as Pantalla
+    rectangle "Sensor GPS\n(Ubicación)" as GPS
+    rectangle "Cámara / Galería\n(Fotos de reportes)" as Camara
+    rectangle "Módulo de red\n(Wi‑Fi / Datos móviles)" as Red
+  }
+}
+
+cloud "Servicios en la nube" as Nube {
+  rectangle "Supabase\n(Auth, BD, Storage)" as Supabase
+  rectangle "Servicio de IA\n(Chatbot EcoBot)" as IA
+}
+
+Usuario --> Pantalla : Gestos, toques\ntexto en formularios
+Pantalla --> UI : Eventos de interfaz
+UI --> LogicaUI : Datos de entrada\n(validaciones, reglas)
+
+LogicaUI --> GPS : Solicitar coordenadas
+LogicaUI --> Camara : Tomar / seleccionar foto
+LogicaUI --> Red : Enviar / recibir datos
+
+Red --> Supabase : HTTPS (REST, tiempo real)
+Red --> IA : HTTPS (consultas de chatbot)
+
+Supabase --> LogicaUI : Respuestas de Auth,\nreportes, noticias, comunidad
+IA --> LogicaUI : Texto generado\npara el chatbot
+
+UI --> Pantalla : Renderizar listas,\nmapas, tarjetas y mensajes
+
+@enduml
+

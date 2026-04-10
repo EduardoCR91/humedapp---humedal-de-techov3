@@ -2,7 +2,7 @@
 left to right direction
 actor "Usuario" as user
 
-rectangle "Participación" {
+rectangle "Comunidad" {
   usecase "Ver feed de consultas\nde la comunidad" as UC_VIEW_FEED
   usecase "Filtrar por\núltimos o destacados" as UC_FILTER_FEED
   usecase "Publicar nueva consulta" as UC_CREATE_POST

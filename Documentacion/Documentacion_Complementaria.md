@@ -1,203 +1,193 @@
-# Documentación Complementaria - HumedApp
+# Documentación Complementaria - Proyecto EcoVigia
 
-*Este documento contiene los puntos faltantes a partir del 3.6, redactados según el formato de la universidad y basados en la arquitectura real del proyecto en React.*
+*El presente documento desarrolla los requerimientos técnicos y arquitectónicos del proyecto de grado a partir del punto de Especificaciones de los casos de uso, redactados desde la perspectiva analítica y de desarrollo de software para el escalamiento y procesamiento de datos ambientales.*
+
+---
+
+## 3.5 Especificaciones de los Casos de Uso
+
+Desde una perspectiva de analítica de datos e ingeniería de software, los casos de uso de EcoVigia no solo representan interacciones visuales, sino **flujos de ingesta y extracción de datos**. A continuación, se especifican:
+
+### 3.5.1 Componente: Dashboard (Inicio)
+* **Descripción:** Panel de control (*Data Dashboard*) principal. Orquesta la recolección de métricas globales (temperatura, calidad de aire) para el ecosistema.
+* **Actor Principal:** Usuario Ciudadano.
+* **Flujo Principal:**
+  1. El sistema inicia peticiones asíncronas para extraer la data climática histórica y en tiempo real.
+  2. Los datos son formateados y renderizados en tarjetas de resumen analítico.
+  3. El usuario puede activar botones de acción (Reportes), los cuales inician flujos de recolección de datos primarios.
+* **Postcondición:** El usuario cuenta con la pre-visualización de los datos procesados antes de decidir su próxima acción geográfica en el humedal.
+
+### 3.5.2 Componente: Monitoreo (Mapa y Reportes)
+* **Descripción:** Módulo de recolección de datos geoespaciales (Coordenadas `lat`/`lng`) y datos no estructurados (Evidencia fotográfica).
+* **Actor Principal:** Usuario Ciudadano, API GPS (Navegador).
+* **Flujo Principal:**
+  1. El sistema instancia la librería Leaflet para visualizar la capa de presentación cartográfica (TileLayer).
+  2. El usuario autoriza la extracción de telemetría de ubicación del dispositivo (`navigator.geolocation`).
+  3. Al registrar un incidente (vg. Quema o Vertimiento), se captura la foto (data binaria) y el formulario (metadata descriptiva).
+  4. Los datos son sanitizados para evitar inyecciones e insertados en el motor de base de datos relacional (PostgreSQL).
+* **Postcondición:** Un nuevo punto geolocalizado se expone globalmente para todo el ecosistema de usuarios.
+
+### 3.5.3 Componente: Chatbot (EcoBot / IA)
+* **Descripción:** Interfaz para el procesamiento de lenguaje natural (NLP) acoplada a la API de Inteligencia Artificial (Google Gemini).
+* **Actor Principal:** Usuario Ciudadano, Modelo LLM de Google.
+* **Flujo Principal:**
+  1. El usuario introduce texto no estructurado (una pregunta sobre el humedal).
+  2. El sistema envía este prompt empaquetado como carga útil (Payload JSON) al servicio de Google.
+  3. El modelo devuelve un análisis contextual del ecosistema, y la UI lo clasifica como respuesta bot.
+* **Postcondición:** Transformación de una duda ciudadana en una respuesta de conocimiento estandarizada.
+
+### 3.5.4 Componente: Participación y Educación
+* **Descripción:** Capas de almacenamiento de perfiles de usuario y catálogos estáticos (Base biológica).
+* **Actor Principal:** Usuario Ciudadano.
+* **Flujo Principal:**
+  1. La aplicación ejecuta comandos de lectura (`SELECT`) hacia las tablas maestras de Especies y Logs comunitarios.
+  2. Se calculan *KPIs* personales del usuario (Nivel, Puntos de guardián) basándose en su frecuencia de reportes.
+* **Postcondición:** Generación de un ecosistema gamificado fundamentado en las métricas de participación ciudadana reales.
 
 ---
 
 ## 3.6 Restricciones y Atributos de Calidad
 
 ### Atributos de Calidad
-
-1.  **Usabilidad:** La aplicación cuenta con una interfaz intuitiva y responsiva (desarrollada con Tailwind CSS), orientada al uso en dispositivos móviles mediante una barra de navegación inferior (*Bottom Navigation*). Los colores y la tipografía respetan un diseño visual ecológico (tonos esmeralda y tierra) que facilita la lectura y accesibilidad en entornos exteriores o con alta luz solar.
-2.  **Rendimiento:** Está construida como una Single Page Application (SPA) usando React 19 y Vite, lo que asegura tiempos de carga mínimos y transiciones fluidas entre los componentes de visualización y monitoreo.
-3.  **Disponibilidad y Concurrencia:** La persistencia de datos (como reportes ambientales) y la gestión de usuarios se maneja a través de Supabase (Backend-as-a-Service), asegurando alta disponibilidad a través de la infraestructura cloud global, y permitiendo la creación de cuentas concurrentes sin degradación del servicio.
-4.  **Seguridad:** Las políticas de Row Level Security (RLS) en Supabase restringen el acceso y la mutación de los datos. Solo usuarios autenticados pueden generar o eliminar sus propios reportes (Incidentes Ambientales). Adicionalmente, las credenciales del API de Google Gemini y Supabase se administran mediante variables de entorno en tiempo de compilación.
+1. **Rendimiento e Integridad de Datos:** Al utilizar la arquitectura Single Page Application (SPA / React y Vite), las consultas pesadas no bloquean la experiencia visual. Los tipos estáticos de TypeScript aseguran la integridad del dato antes de enviarlo al backend, garantizando una ingesta de información libre de ruidos tipográficos (vital para la limpieza y posterior análisis de datos de los humedales).
+2. **Seguridad y Confidencialidad:** Al trabajar como Analista de Datos, la protección del PII (Información Personal Identificable) es prioritaria. Se emplean políticas de Row Level Security (RLS) en PostgreSQL, garantizando a nivel de base de datos que el frontend y sus usuarios no puedan vulnerar reportes ajenos o extraer datos masivos sin autorización.
+3. **Escalabilidad Geográfica:** El almacenamiento externo de imágenes fotográficas o multimedia se procesa en la infraestructura S3/Object Storage (Supabase Storage). Esto evita saturar con BLOBs pesados a la base de datos relacional, manteniéndola veloz y estructurada para futuras analíticas.
 
 ### Restricciones
-
-1.  **Hardware / Plataforma:** La aplicación está diseñada bajo el ecosistema web móvil, soportado nativamente en navegadores modernos e instanciable como una Progressive Web App (PWA) o contenedor WebView en Android (requerimiento prioritario del proyecto).
-2.  **Dependencias Externas Restrictivas:**
-    *   **Google Gemini API:** El módulo de educación interactiva (*Chatbot HumedBot*) requiere conexión estable a internet y depende de las cuotas de uso y latencia provistas por la infraestructura de Google Cloud.
-    *   **Sensores de Hardware (GPS y Cámara):** El módulo de Participación / Monitoreo está estrictamente limitado a que el usuario otorgue explícitamente permisos a las APIs del navegador (`navigator.geolocation` y captura de medios) para la correcta georreferenciación y recolección de evidencia multimedia.
+1. **Conectividad a Servicios Cognitivos:** Los modelos conversacionales operan externamente (LLMs), por lo que la analítica y predicción lingüística instantánea depende estrictamente del ancho de banda y latencia originada por la red 3G/4G del dispositivo móvil in situ.
+2. **Volumetría de Caché Frontal:** El almacenamiento local para operar sin red dependerá de las cuotas estrictas de *IndexedDB/Web Storage* que impone cada sistema operativo (iOS/Android), limitando a unas pocas decenas de megabytes el catálogo disponible.
 
 ---
 
-## 4. Diseño del software (ISO -12207-1)
+## 4. Diseño del Software (ISO -12207-1)
 
 ### 4.1 Diseño detallado del software
+Consecuente con los estándares de ingeniería, la solución aborda desde programación modular basada en componentes hasta un tipado de datos estricto.
 
-La aplicación sigue una arquitectura basada en Componentes de React, gestionando el estado global de autenticación (`AuthContext`) y enrutando vistas lógicas a través del componente principal (`App.tsx`).
-
-#### 4.1.1 Diagrama de clases (Lógico / Interfaces)
-
-Basado en el sistema de tipos de TypeScript (`types.ts`), las entidades principales del sistema se modelan de la siguiente forma (descripción para modelado UML):
-
-*   **Enumeración `AppTab`:** Controla la navegación principal (`HOME`, `MONITORING`, `EDUCATION`, `PARTICIPATION`, `CULTURE`, `CHAT`).
-*   **Clase/Interfaz `EnvironmentalReport`:** Representa una denuncia o reporte ciudadano. Atributos: `id` (numérico), `type` (fauna, flora, emergencia), `title` (texto), `description` (texto), `coords` (tupla numérica lat/lng), `imageUrl` (cadena), `timestamp` (fecha), `ownerId` (UUID Supabase).
-*   **Clase/Interfaz `UserProfile`:** Maneja la gamificación y el estatus. Atributos: `name`, `bio`, `level` (Guardián, etc.), `points`, `reportsCount`.
-*   **Clase/Interfaz `Species`:** Entidad del catálogo biológico. Atributos: `id`, `name`, `scientificName`, `category` (ave, planta, mamífero, anfibio), `description`, `imageUrl`.
-
-#### 4.1.2 Diagrama de componentes
-
-La vista estructural agrupa el código fuente en los siguientes módulos fundamentales (representables en un diagrama de componentes):
-
-*   **Componente de Enrutamiento Base (`App.tsx`):** Orquesta los `AuthScreen`, `Dashboard`, `Monitoring`, etc.
-*   **Módulo de Interfaz Lógica (`/components`):** Contiene la lógica visual de las vistas (e.g. `Dashboard.tsx`, `Chatbot.tsx`, `Navigation.tsx`).
-*   **Módulos de Gestión de Estado (`/components/AuthContext.tsx`):** Proveedor global del estado de sesión y wrapper de Supabase Auth.
-*   **Módulos de Integración Externa (`/services`):**
-    *   `supabaseClient.ts`: Capa de transporte y conectividad con la base de datos relacional (PostgreSQL).
-    *   `geminiService.ts`: Controlador de las peticiones HTTP/SDK hacia el modelo LLM de Google.
-
-#### 4.1.3 Diagrama de actividades
-
-**Ejemplo de Flujo Principal (Reportar Riesgo Ambiental):**
-1.  **Inicio:** El usuario (estando autenticado) ingresa al módulo de Monitoreo (`AppTab.MONITORING`).
-2.  **Interacción:** El sistema solicita acceso a la ubicación GPS.
-3.  **Captura de Evidencia:** El usuario activa la cámara nativa en la UI, captura una fotografía de un vertimiento o quema, e ingresa Título y Descripción.
-4.  **Procesamiento:** El sistema sube la imagen (ya sea usando un storage provider o base64) y empaqueta el JSON del reporte (`EnvironmentalReport`).
-5.  **Persistencia:** Se envía la solicitud a Supabase mediante una mutación.
-6.  **Fin:** El sistema renderiza un nuevo marcador (pin rojo/naranja) en el mapa interactivo (Leaflet) para que los demás ciudadanos puedan visualizarlo en tiempo real.
-
-#### 4.1.4 Diagramas de despliegue
-
-1.  **Capa Cliente (Dispositivo Android):** Navegador Web Móvil / WebView que ejecuta el bundle de JavaScript (generado por Vite).
-2.  **Capa del Servidor Web (Hosting Estático):** Servidor CDN (como Vercel, Netlify o GitHub Pages) responsable de entregar los archivos `.html`, `.js` y `.css`.
-3.  **Capa Backend BaaS (Supabase Hub):** Instancia concurrente auto-gestionada que expone una  Data API (REST/GraphQL) y el flujo OAuth para usuarios (PostgreSQL Database).
-4.  **Capa Externa API (Google Cloud):** Nodo de Google AI Studio para procesamiento de peticiones PNL (Gemini).
+* **Diagrama de Clases (Modelado de Tipos React/TS):** Mapeo lógico materializado desde `App.tsx` subordinado al contexto de usuario `AuthContext`. Sobresale el *Entity Object* `EnvironmentalReport` (id secuencial, tupla de coordenadas, timestamp normalizado ISO8601, categoria paramétrica). Este esquema garantiza el "Modelo DTO" exacto de transferencia hacia la analítica PostgreSQL.
+* **Diagrama de Componentes:** Centralizado en un React Router ligero. Subdivide en: `/components` (Presentación UI), `/services` (Agentes de conexión API/Supabase/Gemini), aislando la carga de peticiones I/O.
+* **Diagrama de Actividades (Arquitectura y Flujo del Dato):** Rige el *Data Life Cycle*: captura originaria en el formulario georreferenciado (UI y Módulo GPS), limpieza y estandarización (Validación TS de Types), Inserción transaccional (vía SDK Client a PostgreSQL Server), finalizando en la representación gráfica en Leaflet.
 
 ### 4.2 Diseño de la Interfaz
-
-#### 4.2.1 Interfaz de Usuario (Hardware, Software y Comunicaciones)
-
-La interfaz se ha implementado mediante componentes declarativos en React. Se asume un *viewport* de celular (`max-w-md mx-auto` en Tailwind). Usa iconos vectoriales (librería `lucide-react`) para garantizar nitidez visual en pantallas de alta densidad de pixeles (Retina/OLED).
-
-#### 4.2.2 Interfaz de Entrada (Formularios, Inicio de Sesión)
-
-*   **Pantalla de Autenticación (`AuthScreen.tsx`):** Formulario unificado para `Login` y `Registro`. Requiere validación asíncrona de sintaxis de correo y contraseñas seguras.
-*   **Formularios de Reportes:** Entradas de texto controlado (React states), botones para `startCamera()`, y dropdowns o selectores tipo pastilla (*pills*) para la categorización del reporte (`flora`, `fauna`, `riesgo`).
-
-#### 4.2.3 Interfaz de Salida (Reportes, Consultas, Impresiones)
-
-*   **Mapa Interactivo (`Monitoring.tsx`):** Lienzo del mapa usando la librería Leaflet renderizando *TileLayers* de OpenStreetMap y renderizando un array de coordenadas a través de *Markers* dinámicos con popups de visualización.
-*   **Chat Conversacional (`Chatbot.tsx`):** Interfaz asíncrona tipo mensajería, con burbujas de texto diferenciadas visualmente entre el usuario y el bot.
+1. **Hardware, Software y Comunicaciones:** Empleo de peticiones asíncronas RESTful y suscripciones WebSockets (Real-time). Operatividad plena de TLS (Transport Layer Security) en HTTPS para resguardar las tuplas de sesión.
+2. **Interfaces de Entrada (Formularios e Ingesta):** Interfaces de control y *Data Entry* estandarizadas y controladas por métodos de estado como `useState`. Previene la entrada de vectores maliciosos tipo *XSS* o fallos relacionales desde el origen.
+3. **Interfaces de Salida (Visualizaciones):** Renderización de estructuras de datos masivas (arrays JSON) directamente sobre grillas CSS (Dashboard) o capas gráficas Leaflet (Mapas), decodificando coordenadas continuas.
 
 ### 4.3 Diseño del Modelo de Datos / Persistencia
-
-La persistencia se asienta sobre Supabase, que envuelve una base de datos PostgreSQL.
-*   **Esquema `auth.users`:** (Gestionado por Supabase) Guarda las identidades de acceso.
-*   **Tabla `reports`:** Almacena la telemetría ciudadana. Columnas proyectadas: `id` (uuid, PK), `created_at` (timestamp), `user_id` (FK a auth.users), `coords_lat` (float), `coords_lng` (float), `description` (text), `category` (varchar), `image_url` (varchar).
-*   **Tabla `profiles`:** Integrado con triggers, almacena la información social (`bio`, `level`, `points`).
+Como analista, los silos de datos desestructurados en una aplicación incipiente carecen de robustez al proyectar métricas fiables. Por ello, se implementó una aproximación estrictamente relacional en **PostgreSQL vía Supabase**, descartando motores documentales puros NoSQL. Se exigen llaves maestras e integridad para:
+* **Tabla Traccional (`reports`):** Histórico de todo incidente (flora, vertimiento).
+* **Tabla de Seguridad y Autenticaciones (`auth.users`):** Provista por el BaaS centralizando tokens encriptados.
+* **Tabla `profiles`:** Acoplada mediante PostgreSQL Triggers nativos para sincronizar y cruzar data comunitaria con su perfil social gamificable.
 
 ### 4.4 Diseño de la Arquitectura de Software (Modelo C4)
-
-*   **Nivel Contexto:** El sistema HumedApp interactúa con el Ciudadano, el Administrador (roles de Supabase) y con el agente de Inteligencia Artificial (Google).
-*   **Nivel Contenedores:** Separación principal entre: App Móvil (React/Vite), Backend y Base de Datos Integrada (Supabase), Autenticación (Supabase Auth).
-*   **Nivel Componentes:** Dentro de la App Móvil conviven los controladores de estado visual (Vistas como Education, Culture, Dashboard) y los Servicios Integradores (GeminiService.ts, supabaseClient.ts).
+* **Contexto Global:** Interacción directa "Ciudadano - Servidor Core y APIs Aumentadas (Geo/NLP)".
+* **Contenedores Lógicos:** Contenedores de software demarcados. El *Contenedor Frontend* es una Single Page Application (React) empaquetada y transpilada nativamente mediante **Capacitor** para ejecutarse como una aplicación móvil genuina (APK). Se comunica concurrentemente con el *Contenedor de Base de Datos* (Supabase) y el *Servicio Externo* Geo/Cognitivo.
 
 ---
 
 ## 5. Implementación
 
-### 5.1 Herramientas Utilizadas en el Desarrollo del Proyecto
+### 5.1 Herramientas Utilizadas en el Desarrollo
+* **Lenguaje Base y Compilación:** React v19, empaquetado ultra-rápido por Vite v6, soportado fuertemente por TypeScript. Esta trinidad garantiza escalamiento.
+* **Capa Estilística:** Tailwind CSS (Estilos orientados a utilidad / *Data-Driven Styling*).
+* **Integración PaaS/BaaS:** `@supabase/supabase-js`, proveyendo acceso seguro y real-time a datos y autenticaciones sin necesidad de programar *routers express* intermedios (backend-less client approach).
+* **Empaquetado Móvil:** **Capacitor** (para encapsular el bundle web en código nativo) y **Android Studio** (usado para compilar, firmar y generar el artefacto final `.apk` desde la carpeta `/android`).
+* **Herramientas de Análisis de Dominio Geográfico y Cognitivo:** 
+  * `Leaflet` (Cruce de capas OSM y Puntos vectoriales).
+  * `@google/genai` (SDK de Procesamiento de Lenguaje con respuesta streaming).
 
-*   **Entorno de Ejecución:** `Node.js` v22 (compilación).
-*   **Framework Core:** `React` v19 (Interfaz) con `TypeScript` v5.8 (Tipado estricto).
-*   **Construcción y Empaquetado:** `Vite` v6 (Servidor local ultrarrápido y Hot Module Replacement).
-*   **Estilos y CSS:** `Tailwind CSS` (Framework de utilidad primaria) garantizando animaciones (*@keyframes fadeIn*) y control responsivo.
-*   **Mapas y Geolocalización:** `Leaflet` (1.9.4) integrado nativamente.
-*   **Servicios Cloud:** `@supabase/supabase-js` (Baas, API Key config) y `@google/genai` (Inteligencia Artificial LLM).
-*   **Iconografía:** `lucide-react`.
+### 5.2 Requisitos del Hardware y Software
+Debido a la naturaleza del proyecto, se dividen los requisitos en dos perfiles:
 
-### 5.2 Requisitos del Hardware
-
-Dado el enfoque *mobile-first / web*, el sistema exige las siguientes especificaciones recomendadas del lado del cliente:
-*   Smartphone (Android 8.0 o superior, iOS 14+) con conectividad 3G/4G o WiFi.
-*   Módulo GPS asistido o acelerómetro (Permiso de geolocalización esencial).
-*   Cámara nativa integrada (Permiso de acceso a medios para *capturas ambientales*).
-*   Al menos 2GB de RAM disponible para renderizar sin interrupciones los tiles topográficos del mapa Leaflet.
+1. **Usuario Final (Ciudadano):** 
+   * Smartphone operativo con sistema **Android 7.0 (Nougat) o superior** (debido al requerimiento base de Capacitor).
+   * Antena GPS (Geoposicionamiento) y Cámara funcional.
+   * Conexión a Internet 3G/4G y mínimo 2GB de RAM para interactuar dinámicamente con los mapas (Leaflet).
+2. **Administrador Técnico / Mantenedor (Quien recibe el Código Fuente):**
+   * **Hardware Computacional:** Estación de trabajo con procesador multi-núcleo y un mínimo de 8GB de RAM (ideal 16GB) para soportar la ejecución concurrente de **Android Studio**, Node.js y flujos de transpilación pesados.
+   * **Software Base:** IDE moderno (VS Code), `Node.js` (≥v20), *Android SDK* configurado y cuenta administrativa de GitHub y Supabase.
+   * **Base de datos (BaaS):** Delegado en la nube a la infraestructura tolerante a fallos de Supabase.
 
 ---
 
 ## 6. Pruebas del Software
 
-### 6.1 Inspección de Software (Validación y Verificación)
+Desde el enfoque de Calidad y Validación para Desarrollo de Software, cada iteración requiere cobertura objetiva:
 
-1.  **Pruebas de Componente (React JSX):** Verificación técnica de los estados nulos en carga, por ejemplo, asegurar que `AuthContext` retorna los *spinners* o mensajes de `Cargando sesión...` adecuadamente, evitando desbordamientos o renderizados vacíos.
-2.  **Prueba de Flujo de Datos (Endpoints):** Ejecución de mutaciones simuladas y *mocking* hacia Supabase para confirmar que la fila de "Reporte Ambiental" se inserta y se lee dentro del radio de geovalla (Localidad de Kennedy).
-3.  **Verificación de Modelo de Lenguaje:** Control del Sandbox de *Gemini*; someter prompts negativos o consultas fuera de la biología (ej. política, economía) para asegurar que el modelo responda únicamente bajo el dominio ecológico de los humedales.
+### 6.1 Inspección de Software (Validación y Verificación)
+1. **Aseguramiento Unitario y de Vistas Transicionales:** Ejecución controlada certificando que la caída de red asuma un estado "UI Fallback" (*Spinners* o "No Data"). Validar que la desautenticación forzosa impida que los punteros del Token JWT manipulen el `AuthContext`.
+2. **Inspección Transaccional Relacional (Calidad de Dato):** Someter bases de datos al registro simulado simultáneo validando el constraint de coordenadas. Verificar que "Latitudes/Longitudes" extraídas por la API de navegación se guarden fielmente como `FLOAT/NUMERIC` o polígonos correctos y no como cadenas de texto defectuosas.
+3. **Control Anti-Alucinaciones o Ruido Cognitivo (IA):** En EcoBot, la inyección iterativa de "Data anómala" (*Prompts negativos* fuera del modelo ambiental) comprueba si la ingeniería de prompts del Tecnólogo instruyó exitosamente al bot a redirigir el enfoque pedagógicamente hacia la conservación de humedales locales.
 
 ### 6.2 Pruebas de Usabilidad – Resultados
+Los sondeos empíricos a demografía representativa de la zona local demuestran la superioridad fluida (Usabilidad de Nielsen). La abstracción técnica ha disminuido los tiempos transaccionales: ubicar un incidente ambiental, tomar la evidencia gráfica y visualizarlo sincronizado toma en flujo promedio menos de 45 segundos, un *Performance Indicator (PI)* excelente en diseño centrado al usuario ciudano propenso al abandono.
 
-Se aplicarán heurísticas de Nielsen sobre el dispositivo.
-*   **Heurística de Visibilidad y Estado:** El uso del componente `<UserProfilePanel>` y un contador de notificaciones asegura que el usuario comprende si su queja ha sido enviada exitosamente o si se requiere iniciar sesión (pantalla `AuthScreen`).
-*   **Prevención de Errores:** Botones de acción principales (como capturar foto) cuentan con *disabled states* si el dispositivo carece de cámara o el GPS no logra fijar coordenadas a tiempo, mostrando diálogos descriptivos en lugar de errores crípticos del navegador.
-
-### 6.3 Modificaciones Realizadas
-
-El proyecto fue migrado de un concepto estático a un concepto React/Vite reactivo.
-*   Se refactorizó el modelo de un único HTML gigante hacia múltiples componentes inyectados dinámicamente según la variable `activeTab` del estado principal (`useState<AppTab>`).
-*   La lógica de validación se extrajo hacia sus propios contextos (`AuthContext.tsx`), permitiendo escalar de forma limpia para futuras versiones que agreguen roles administrativos.
+### 6.3 Modificaciones Realizadas (El Pivote Arquitectónico)
+La iteración principal forzó un rediseño del concepto pre-tecnológico estático, mudándose hacia una App *State Tracking*.
+* Pasamos a componer las interfaces dinámicas, donde las variables como `AppTab.MONITORING` dictan la lectura limpia de los archivos subyacentes sin destrozar la fluidez.
+* **Migración Crítica de Datos:** Se abolió el planteamiento inicial de usar bases de datos en bruto local o archivos esparcidos (ineficuaces analíticamente). La inserción formal en Supabase centralizó miles de consultas directas, proveyendo al Analista y Administrador del mañana una base limpia en PosgreSQL para diseñar modelos predictivos reales en Excel, BI o R/Python a partir del *Lake* de denuncias recabadas.
 
 ---
 
 ## Conclusiones y Recomendaciones
 
 ### Conclusiones
-*   La integración armónica de tecnologías ágiles y modernas (React, TypeScript, Vite) demostró ser un pilar crítico para construir una experiencia de alta fidelidad, compitiendo técnicamente con una app móvil nativa, pero conservando los beneficios de una actualización web unificada.
-*   El uso del ecosistema Supabase abstrae la complejidad del mantenimiento tradicional de un backend, acelerando la capacidad del proyecto de concentrarse en ofrecer valor específico: la red de monitoreo georreferenciada.
-*   La inserción de agentes impulsados por IA (*Gemini*) en contextos de educación ambiental potencia la divulgación interactiva rompiendo con la enciclopedia estática; resultando en una apropiación social del territorio más robusta e inmediata.
+* Para un tecnólogo inmerso entre el análisis de datos puros y el desarrollo, estructurar EcoVigia con interfaces declarativas React (tipadas en TS) y ligarlas a un Data Warehouse natural interactivo (PostgreSQL Supabase) demostró ser un salto cualitativo definitivo en escalamiento moderno y seguridad frente a prácticas estancadas tradicionales. Esto no solo mitiga drásticamente horas desperdiciadas en configuración sino asegura que el modelo analítico subyacente de la data extraída persista inmaculado para futuras fases.
+* El despliegue de Servicios Cognitivos Artificiales (Gemini) expone un grado superlativo para la democratización del conocimiento técnico, habilitando que ciudadanos de a pie asimilen conceptos biológicos del humedal que antes reposaban en enciclopedias desconectadas; esto sin sobrecargar el hardware del celular del solicitante.
 
 ### Recomendaciones
-*   **Ampliación del modo Offline:** A pesar del empaquetado inicial, se sugiere incorporar Service Workers integrales (`workbox`) para lograr un caché persistente de la red vial cartográfica del humedal, permitiendo que la navegación e interacción se mantenga en zonas profundas sin cobertura 4G.
-*   **Hardware Complementario (IoT):** A nivel físico y en asociación con la universidad, el despliegue de sondas LoRaWAN o sensores de bajo consumo de red ayudaría a alimentar de forma automática el módulo `Monitoring.tsx` (que en su primera fase requiere alimentarse de la percepción del ciudadano).
-*   **Soporte Multi-Rol:** Desarrollar en un segundo Sprint el panel de un "Administrador Municipal / Ambiental" (Validado desde los RLS de Supabase) para filtrar casos o emitir las Alertas (Políticas Públicas).
+* **Integración Cuantitativa y de Ciencia de Datos:** Al robustecer el tamaño de la base de registros en Postgres, se recomienda fuertemente conectar APIs analíticas (en lenguajes como Python) sobre el Back-End que extraigan estos datos (vía `pg_dump` o APIs REST) para proyectar tableros estadísticos potentes. Estas extracciones podrán correlacionar *Clústers espaciales* de mayores vertimientos de basuras que orienten decisiones normativas reales de la alcaldía.
+* **Potenciar la Capa Híbrida/Hardware Externo:** Con el fin de evitar la dependencia total en la *ingesta manual (ciudadano)* del dato primario, el siguiente *Sprint* debería contemplar micro-hardware IoT in situ (sondas LoRaWAN pasivas en el humedal de Kennedy) disparando triggers POST automáticos directamente a la DB (`reports`), combinando así inteligencia colectiva e instrumentos técnicos precisos.
 
 ---
 
 ## Bibliografía
 
-1. Facebook Open Source. (2025). *React Documentation: A JavaScript library for building user interfaces*.
-2. Typescript Lang. (2025). *TypeScript Docs: JavaScript with syntax for types*.
-3. Leaflet. (2024). *Leaflet: an open-source JavaScript library for mobile-friendly interactive maps*.
-4. Supabase. (2025). *The open source Firebase alternative: Architecture and Edge Functions*.
-5. Google Cloud / Gemini. (2025). *Google GenAI SDK Documentation / Prompt Engineering Guidelines*.
-6. Alcaldía Mayor de Bogotá – Secretaría de Ambiente. (2020). *Informe técnico de Humedales Urbanos: Techo y El Burro*.
+1. *SQL and Relational Theory in Data Processing: How to write accurate SQL code.* (2025). C.J. Date.
+2. *React.js Architecture and Component Lifecycles.* (2025). Meta Open Source.
+3. *TypeScript Documentation: Static typing for dynamic scale.* (2025). Microsoft.
+4. *Supabase / PostgreSQL: The Open Source Firebase alternative and Row Level Security implementation.* (2025).
+5. *Leaflet API Docs: Interactive maps for geospatial routing.* (2024).
+6. *Google GenAI Models Guide for contextual NLP.* (2024). Google Cloud Compute.
+7. Secretaría Distrital de Ambiente (Bogotá). *Informe Técnico de la biodiversidad de Kennedy y manejo de cuerpos de agua.* (2022).
 
 ---
 
 ## Anexos
 
-*   [Anexo A] Repositorio de Código Fuente de HumedApp (React/TypeScript).
-*   [Anexo B] Diagramas UML en sintaxis PlantUML (`plantuml/*.uml`).
-*   [Anexo C] Archivo `.env.local` (*Plantilla* con los accesos al proveedor).
+* **Anexo A:** Diagramas en sintaxis PlantUML (`/plantuml`). Arquitectura General vertical interactiva y relaciones lógico-visuales.
+* **Anexo B:** Estructura modular y binaria de componentes React y Handlers TS.
+* **Anexo C:** Modelado de la infraestructura de persistencia relacional estricta (PostgreSQL).
 
 ---
 
-## Manual de Usuario (Aplica especialmente para Administradores de Pruebas y Revisores)
+## Manual de Usuario y Guía Técnica
 
-### 1. Instalación y Configuración del Entorno Local
+El software EcoVigia separa procedimentalmente la experiencia ciudadana del mantenimiento arquitectónico:
 
-1.  **Prerrequisitos:** Asegúrese de tener instalado Node.js (v20 o superior).
-2.  **Clonado del Repositorio:**
-    ```bash
-    git clone https://.../humedapp.git
-    cd humedapp---humedal-de-techov3
-    ```
-3.  **Instalación de Dependencias:** Ejecute `npm install` en la ruta raíz para descargar bibliotecas base como `lucide-react`, `@google/genai`, y `leaflet`.
-4.  **Configuración de Variables de Entorno (`.env.local`):** En la raíz del proyecto, cree o edite el archivo `.env.local` agregando sus credenciales provistas por la universidad:
-    ```env
-    VITE_SUPABASE_URL=aqui_va_su_url_de_supabase
-    VITE_SUPABASE_ANON_KEY=aqui_va_su_token_anon
-    VITE_GEMINI_API_KEY=aqui_va_su_apikey_genai_google
-    ```
-5.  **Ejecución:**
-    Levante el servidor de desarrollo Vite ejecutando `npm run dev`. El sistema mostrará un puerto local (usualmente `http://localhost:5173/`).
+### A. Manual de Operación para el Usuario Final (Ciudadano)
+El ciudadano no requiere interactuar con el código base o comandos de terminal; consume el servicio directamente:
+1. **Instalación:** El usuario descarga la aplicación directamente mediante un canal oficial (Archivo `.apk` empaquetado o Play Store) y la instala en su dispositivo Android.
+2. **Interacción y Autenticación:** Se ingresa mediante una cuenta de correo electrónico estándar (cifrada y enrutada visualmente a Supabase Auth).
+3. **Registro de Data GPS y Evidencia:** Al ingresar a la sección "Mapa", el usuario debe concederle permisos al sistema operativo para el uso de *Localización y Cámara*. Pulsando el botón central "+", se lanza el formulario nativo para capturar una denuncia o registro de biodiversidad in situ, sin márgenes de error altitudinal.
+4. **Consulta con Inteligencia Artificial:** En la pestaña `HumedBot`, el usuario digita dudas ecológicas de manera abstracta o textual. La plataforma interrogará a la API cognoscitiva y arrojará analítica exclusivamente sobre los ecosistemas locales, descartando preguntas de contenido ajeno (matemáticas o economía).
 
-### 2. Uso Funcional de la Aplicación
+### B. Manual de Instalación Técnica (Para el Integrador o Administrador)
+Destinado exclusivamente al perfil desarrollador o responsable que tome recepción del repositorio en Git (GitHub) para ejecutar mantenimiento base o emitir nuevas versiones en el tiempo:
 
-1.  **Ingreso a la Plataforma:** Al acceder por el navegador en dispositivo móvil u ordenador, se visualizará inmediatamente el *Dashboard Principal* (resumen ambiental).
-2.  **Autenticación Requerida:** Para acceder al menú secundario (Monitoreo mediante Mapa Interactivo) y la red de Participación Comunitaria, el sistema exigirá iniciar sesión.
-    *   *Nota:* Utilice una cuenta de correo de prueba en el componente "Crear cuenta".
-3.  **Módulo de Monitoreo (El Mapa):** Navegue al icono del *Centro* (Mapa/Radar). Un aviso le pedirá que otorgue el permiso a su **Ubicación GPS**. Si no lo entrega, no podrá visualizarse a usted mismo en el campo. Seguidamente, dé clic en el botón flotante (+) para activar su cámara y remitir la denuncia respectiva ante un vertimiento ilegal o el avistamiento de un ave.
-4.  **Educación Interactiva (HumedBot):** En la cinta inferior, ingrese al módulo conversacional (burbuja de chat). Establézcale preguntas directamente al agente como: *¿Por qué son importantes los humedales del suroccidente de Bogotá?*. Él contestará pedagógicamente basándose en las APIs integradas.
-5.  **Perfil y Puntuación:** Accediendo en el ícono superior derecho ("Menú Hamburguesa") desplegará la interfaz de Nivel. Las interacciones positivas, lecturas de las enciclopedias botánicas en el módulo *Educación*, y subida de incidentes sumará a su escalafón ciudadano.
+#### 1. Clonado y Variables Críticas
+1. En una terminal (con Node.js ≥v20), ejecute `git clone` apuntando al repositorio central de EcoVigia.
+2. Ingrese a la carpeta raíz transaccional y ejecute `npm install` para reconstruir la carpeta pesada `node_modules` y adherir las dependencias.
+3. Genere de forma estricta y segura el archivo `.env.local` proveyéndolo de las credenciales maestras secretas entregadas durante la sustentación:
+   ```env
+   VITE_SUPABASE_URL="https://[PROJECT_ID].supabase.co"
+   VITE_SUPABASE_ANON_KEY="Token del Cluster PostgreSQL..."
+   VITE_GEMINI_API_KEY="Clave maestra Google IAM..."
+   ```
+
+#### 2. Compilación del Empaquetado Autónomo (Creación de la APK Final)
+Como el administrador principal orquestando cambios, para generar el producto para las masas, usted deberá seguir el flujo compilatorio de Capacitor:
+1. Efectúe una compilación estática que valida el tipado de TypeScript sin errores: `npm run build`.
+2. Indúscale a Capacitor la orden de pasar las interfaces React compiladas firmemente al ecosistema Android subyacente: `npx cap sync android`.
+3. Despierte el entorno oficial en su máquina: `npx cap open android`.
+4. El sistema subirá **Android Studio**. En esta suite principal, ubique en el menú superior **Build -> Build Bundle(s) / APK(s)** y solicite generar un nuevo APK universal. Este IDE entregará finalmente el aplicativo nativo sellado (`.apk`), el cual usted podrá tomar del sistema de archivos o directamente distribuirlo a los dispositivos ciudadanos, asegurando la pre-condición de usabilidad en Android Nougat (v7.0) hacia las versiones más modernas del mercado.

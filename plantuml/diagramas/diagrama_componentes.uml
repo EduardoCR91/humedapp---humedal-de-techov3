@@ -1,0 +1,56 @@
+@startuml
+skinparam componentStyle uml2
+top to bottom direction
+
+title Diagrama de Componentes - EcoVigia
+
+package "Frontend (React + Vite + Capacitor)" {
+  [App.tsx (Enrutador Principal)] as App
+  [AuthContext (Estado Sesión)] as Auth
+  
+  package "Componentes UI (Vistas)" as Vistas {
+     [Dashboard.tsx\n(Panel General)] as ViewDash
+     [Monitoring.tsx\n(Mapas y Reportes)] as ViewMon
+     [Education.tsx\n(Catálogo Biológico)] as ViewEdu
+     [Culture.tsx\n(Memoria Histórica)] as ViewCul
+     [Participation.tsx\n(Gestión Social)] as ViewPar
+     [Chatbot.tsx\n(Inteligencia Artificial)] as ViewBot
+  }
+}
+
+package "Servicios y Backend" {
+
+  package "Capa de Servicios Lógicos" {
+    [supabaseClient.ts] as SupabaseClient
+    [geminiService.ts] as GeminiService
+  }
+
+  database "BaaS (Supabase)" {
+    [PostgreSQL (Relacional)] as SupabaseDB
+    [Supabase Storage (BLOBs)] as SupabaseST
+    [Servicio de Autenticación] as SupabaseAuth
+  }
+
+  cloud "APIs Externas" {
+    [API Google Gemini] as GoogleGemini
+    [API Leaflet (Mapas)] as LeafletAPI
+  }
+}
+
+App --> Auth : Provee Contexto
+App --> Vistas : Renderiza según AppTab
+
+Auth --> SupabaseAuth : Administra JWT
+
+ViewMon ..> SupabaseClient : CRUD Denuncias
+ViewPar ..> SupabaseClient : Lee Usuarios
+
+ViewMon ..> LeafletAPI : Extrae Cartografía
+ViewBot ..> GeminiService : Pasa Prompts
+
+SupabaseClient --> SupabaseDB : Conexión Data API
+SupabaseClient --> SupabaseST : Ingesta Multimedia
+
+GeminiService --> GoogleGemini : Peticiones NLP
+
+@enduml
