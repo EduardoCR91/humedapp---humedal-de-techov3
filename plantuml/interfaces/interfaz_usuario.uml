@@ -1,5 +1,5 @@
 @startuml
-title Interfaz de Usuario – Hardware, Software y Comunicaciones (EcoVigia)
+title Figura 6. Interfaz de usuario: hardware, software y comunicaciones de EcoVigia
 
 skinparam rectangle {
   BackgroundColor #F8FFF8
@@ -44,4 +44,3 @@ IA --> LogicaUI : Texto generado\npara el chatbot
 UI --> Pantalla : Renderizar listas,\nmapas, tarjetas y mensajes
 
 @enduml
-

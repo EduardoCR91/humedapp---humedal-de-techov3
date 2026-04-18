@@ -1,5 +1,6 @@
 @startuml
 left to right direction
+title Figura 3. Diagrama de casos de uso de Autenticacion
 actor "Usuario" as user
 
 rectangle "Autenticación\n\n" {

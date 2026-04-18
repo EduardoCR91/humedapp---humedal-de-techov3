@@ -1,6 +1,7 @@
 @startuml
 
 left to right direction
+title Figura 10. Diagrama de casos de uso de Registro
 
 actor Usuario
 
@@ -24,6 +25,6 @@ UC1 .> UC3 : <<include>>
 UC1 .> UC4 : <<include>>
 UC1 .> UC5 : <<include>>
 UC5 .> UC7 : <<include>>
-UC7 .> (Supabase - profiles.role = 'user') : <<configurar>>
+UC7 .> (Supabase - profiles.role = 'user') : <<configurar>>\n\n
 
 @enduml

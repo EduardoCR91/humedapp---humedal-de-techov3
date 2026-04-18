@@ -1,5 +1,5 @@
 @startuml
-title Interfaces de Entrada – Formularios y Login (EcoVigia)
+title Figura 7. Interfaces de entrada: formularios y login de EcoVigia
 
 skinparam rectangle {
   BackgroundColor #F0F9FF
@@ -54,4 +54,3 @@ Usuario --> EventosForm : (Admin) crea\n/ edita eventos
 Usuario --> NoticiasForm : (Admin) gestiona\nnoticias
 
 @enduml
-

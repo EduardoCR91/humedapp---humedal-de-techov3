@@ -1,5 +1,6 @@
 @startuml
 left to right direction
+title Figura 5. Diagrama de casos de uso de Monitoreo
 actor "Usuario" as user
 actor "Administrador" as admin
 

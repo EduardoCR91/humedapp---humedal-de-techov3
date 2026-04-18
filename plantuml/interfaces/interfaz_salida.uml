@@ -1,5 +1,5 @@
 @startuml
-title Interfaces de Salida – Reportes, Consultas e Información (EcoVigia)
+title Figura 8. Interfaces de salida: reportes, consultas e información de EcoVigia
 
 skinparam rectangle {
   BackgroundColor #FFFAF0
@@ -55,4 +55,3 @@ Usuario <-- MemoriaOut : Explora historia\ny memoria del humedal
 Usuario <-- ChatbotOut : Recibe orientación\nmediante IA
 
 @enduml
-

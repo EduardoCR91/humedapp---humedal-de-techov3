@@ -5,7 +5,7 @@ skinparam padding 5
 skinparam nodesep 40
 skinparam ranksep 60
 
-title UML - Arquitectura General Vertical (HumedApp)
+title Figura 1. Diagrama general de la arquitectura de EcoVigia
 
 actor "Usuario / Ciudadano" as User
 

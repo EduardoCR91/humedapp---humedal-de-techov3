@@ -1,5 +1,6 @@
 @startuml
 left to right direction
+title Figura 2. Diagrama de casos de uso de Navegacion
 actor "Usuario" as user
 
 rectangle "Navegación" {

@@ -1,6 +1,6 @@
 @startuml
 
-title Diagrama de Despliegue e Infraestructura - EcoVigia
+title Figura 4. Diagrama de despliegue e infraestructura de EcoVigia
 
 node "Dispositivo Móvil Ciudadano" <<Android OS 7.0+>> {
   

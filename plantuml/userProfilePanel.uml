@@ -1,5 +1,6 @@
 @startuml
 left to right direction
+title Figura 11. Diagrama de casos de uso del Panel de Perfil
 actor "Usuario" as user
 actor "Administrador" as admin
 

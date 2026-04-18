@@ -1,5 +1,6 @@
 @startuml
 left to right direction
+title Figura 6. Diagrama de casos de uso de Educacion
 actor "Usuario" as user
 actor "Administrador" as admin
 

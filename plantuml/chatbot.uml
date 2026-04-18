@@ -1,5 +1,6 @@
 @startuml
 left to right direction
+title Figura 9. Diagrama de casos de uso de Chatbot
 actor "Usuario" as user
 
 rectangle "Chatbot\n\n" {

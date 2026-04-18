@@ -1,5 +1,6 @@
 @startuml
 left to right direction
+title Figura 7. Diagrama de casos de uso de Comunidad
 actor "Usuario" as user
 
 rectangle "Comunidad" {

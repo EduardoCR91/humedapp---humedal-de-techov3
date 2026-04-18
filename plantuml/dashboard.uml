@@ -1,5 +1,6 @@
 @startuml
 left to right direction
+title Figura 4. Diagrama de casos de uso de Inicio (Dashboard)
 actor "Usuario" as user
 actor "Administrador" as admin
 

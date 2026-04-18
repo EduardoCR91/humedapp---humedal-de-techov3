@@ -1,5 +1,6 @@
 @startuml
 left to right direction
+title Figura 8. Diagrama de casos de uso de Memoria
 actor "Usuario" as user
 
 rectangle "Memoria\ndel Humedal" {

@@ -1,0 +1,42 @@
+@startuml
+left to right direction
+title Figura 1. Diagrama general de casos de uso de EcoVigia
+
+actor "Usuario" as user
+actor "Administrador" as admin
+
+rectangle "EcoVigia App" {
+  usecase "Navegacion entre modulos" as UC_NAV
+  usecase "Autenticacion" as UC_AUTH
+  usecase "Consultar inicio (Dashboard)" as UC_HOME
+  usecase "Gestionar reportes en Monitoreo" as UC_MON
+  usecase "Consultar Educacion" as UC_EDU
+  usecase "Participar en Comunidad" as UC_COM
+  usecase "Consultar Memoria" as UC_MEM
+  usecase "Consultar Chatbot" as UC_CHAT
+  usecase "Registro de cuenta" as UC_REG
+  usecase "Gestionar panel de perfil" as UC_PROFILE
+  usecase "Administrar noticias y eventos" as UC_ADMIN_CONTENT
+  usecase "Administrar roles de usuarios" as UC_ADMIN_ROLES
+}
+
+user -- UC_NAV
+user -- UC_AUTH
+user -- UC_HOME
+user -- UC_MON
+user -- UC_EDU
+user -- UC_COM
+user -- UC_MEM
+user -- UC_CHAT
+user -- UC_REG
+user -- UC_PROFILE
+
+admin -- UC_ADMIN_CONTENT
+admin -- UC_ADMIN_ROLES
+
+UC_PROFILE .> UC_AUTH : <<include>>
+UC_MON .> UC_AUTH : <<include>>
+UC_COM .> UC_AUTH : <<include>>
+UC_ADMIN_CONTENT .> UC_AUTH : <<include>>
+UC_ADMIN_ROLES .> UC_AUTH : <<include>>
+@enduml
