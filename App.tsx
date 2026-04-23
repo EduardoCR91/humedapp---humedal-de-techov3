@@ -49,11 +49,11 @@ const AppContent: React.FC = () => {
       >
         {user && (
           <div
-            className="absolute left-0 right-0 z-30 px-4 pt-4 pointer-events-none"
-            style={{ top: 'env(safe-area-inset-top, 0px)' }}
+            className="sticky top-0 z-30 px-4 pb-2 bg-gradient-to-b from-emerald-200/70 to-transparent"
+            style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 10px)' }}
           >
             <div className="w-full flex items-center justify-between gap-3">
-              <div className="pointer-events-auto bg-white/90 px-3 py-1.5 rounded-full shadow-sm border border-emerald-100 flex items-center gap-2">
+              <div className="bg-white/90 px-3 py-1.5 rounded-full shadow-sm border border-emerald-100 flex items-center gap-2 min-w-0">
                 <span className="text-sm font-bold text-emerald-800 tracking-tight">
                   EcoVigia!
                 </span>
@@ -67,7 +67,7 @@ const AppContent: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowProfilePanel(true)}
-                className="pointer-events-auto bg-white/90 backdrop-blur border border-emerald-100 shadow-md w-9 h-9 rounded-full flex items-center justify-center text-emerald-700 active:scale-95 transition-transform"
+                className="bg-white/90 backdrop-blur border border-emerald-100 shadow-md w-9 h-9 rounded-full flex items-center justify-center text-emerald-700 active:scale-95 transition-transform shrink-0"
                 aria-label="Abrir menú de perfil"
                 disabled={loading || !user}
               >
@@ -76,7 +76,7 @@ const AppContent: React.FC = () => {
             </div>
           </div>
         )}
-        <div className={user ? 'pt-16' : ''}>
+        <div>
           {loading ? (
             <div className="p-6 text-center text-gray-500 text-sm">Cargando sesión...</div>
           ) : (

@@ -1,5 +1,5 @@
 @startuml
-title Figura 3. Diagrama de clases de la arquitectura EcoVigia
+title Figura 12. Diagrama de clases de la arquitectura EcoVigia
 
 package "Views (UI Components)" {
     class App {

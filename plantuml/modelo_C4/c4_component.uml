@@ -1,0 +1,34 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Modelo C4 (Nivel 3) - Diagrama de Componentes (Aplicación Móvil SPA)
+
+Container_Boundary(spa, "Aplicación Móvil (React / Vite Bundle)") {
+    
+    Component(app_router, "Router Principal (App.tsx)", "React Component", "Cargador base que inyecta dinámicamente las herramientas y bifurca la navegación por pestañas.")
+    
+    Component(ui_dashboard, "Componente Dashboard", "React Function Component", "Ruta de entrada, resume calidad de aire y variables temporales.")
+    Component(ui_monitoring, "Componente Monitoreo", "React / Leaflet", "Integra el GPS Native para posicionar Reportes/Daños e iniciar la cámara del dispositivo.")
+    Component(ui_chatbot, "Componente EcoBot", "React Function Component", "Controlador del chat en vivo, genera burbujas de respuesta y gestiona estado de espera/carga.")
+    Component(ui_education, "Componentes Catálogo", "React Function Component", "Tarjetas (Cards) pasivas detallando ficha biológica (Flora, Anfibios, Aves).")
+
+    Component(service_supabase, "Supabase Client", "TypeScript module", "Objeto singleton importando las llaves 'Anon_Key' para iniciar operaciones CRUD protegidas.")
+    Component(service_gemini, "Gemini Service", "TypeScript file", "Contiene el LLM Prompt Enginering y encapsula fallos en red.")
+
+    Rel(app_router, ui_dashboard, "Renderiza base")
+    Rel(app_router, ui_monitoring, "Si Autenticado, Renderiza")
+    Rel(app_router, ui_chatbot, "Renderiza")
+    Rel(app_router, ui_education, "Renderiza")
+    
+    Rel(ui_monitoring, service_supabase, "Pide volcado de denuncias de BD y sube archivos de la cámara", "JS Object Calls")
+    Rel(ui_chatbot, service_gemini, "Ejecuta Prompt y pasa contexto", "String Text")
+    Rel(ui_education, service_supabase, "Baja colecciones de biomas", "JS Object Calls")
+}
+
+Container_Ext(database_postgres, "Base de Datos Postgre / Supabase", "Database", "Maneja Constraints y Row Level Security.")
+Container_Ext(google_api, "API de Inteligencia AI", "Google GenAI SDK", "El modelo de red neuronal remoto")
+
+Rel(service_supabase, database_postgres, "Conexión transparente de transporte", "REST")
+Rel(service_gemini, google_api, "Flujo streaming por conexión", "HTTPS/TLS")
+
+@enduml

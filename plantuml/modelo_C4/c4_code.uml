@@ -1,0 +1,72 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' NOTA: PlantUML estándar no tiene macros oficiales puras "C4_Code" en su librería standard core,
+' pero se modela con diagramas de clase enriquecidos (UML) según los lineamientos oficiales de Simon Brown.
+
+top to bottom direction
+skinparam classAttributeIconSize 0
+skinparam ranksep 80
+skinparam nodesep 50
+
+title Modelo C4 (Nivel 4) - Diagrama de Código (Vertical)
+
+package "1. Interacción de Logica Componente-React" {
+    
+    class "Monitoring Component" as Monitoring {
+        - estado_camara: boolean
+        - posicion_gps: latlng
+        + handleCapturePhoto()
+        + submitReportData(EnvironmentalReport DTO)
+    }
+
+    class "Chatbot Component" as Chatbot {
+        - chatHistory: array
+        - isLLMLoading: boolean
+        + sendMessageToAI(text: string)
+        + handleResponseStreaming(chunk: Text)
+    }
+
+    class "Supabase Client Instancer" as ClientSupa {
+        - connectionPool: Object
+        + async from('reports').insert(data)
+        + async storage.from('buck').upload(binary)
+    }
+}
+
+package "2. Capa de Transferencia en TypeScript (types.ts) DTOs" {
+
+    class EnvironmentalReport <<Record>> {
+        + id: numeric
+        + type: enum("fauna", "flora", "emergency")
+        + title: string
+        + user: string
+        + date: string
+        + description: string
+        + timestamp: Date
+        + imageUrl: string
+        + coords: array[float, float]
+    }
+    
+    class UserProfile <<Record>> {
+        + name: string
+        + bio: string
+        + avatar: string
+        + level: string
+        + reportsCount: numeric
+        + points: numeric
+    }
+    
+    class GeminiPayload <<Interface>> {
+        + queryText : string
+        + contextRules: string
+    }
+
+}
+
+' Relaciones descendentes para forzar verticalidad
+Monitoring ---> EnvironmentalReport : "  Instancia DTO previo envío  "
+Chatbot ---> GeminiPayload : "  Inicializa estructura abstracta  "
+
+Monitoring ---> ClientSupa : "  ejecuta submitReportData pasándole data\n  segura hacia el bucket y DB  "
+
+@enduml

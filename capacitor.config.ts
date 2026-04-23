@@ -5,6 +5,11 @@ const config = {
   appName: 'ecovigia-humedal-app',
   webDir: 'dist',
   bundledWebRuntime: false,
+  plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
+  },
 };
 
 export default config;

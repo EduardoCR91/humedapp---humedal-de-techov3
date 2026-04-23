@@ -165,35 +165,41 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 relative">
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-          aria-label="Cerrar perfil"
-        >
-          <X size={20} />
-        </button>
-
-        <div className="flex items-start justify-between gap-3 mb-2">
-          <div>
-            <h2 className="text-xl font-bold text-emerald-900 mb-1">Tu perfil</h2>
-            <p className="text-xs text-gray-500">
-              Revisa tus datos de cuenta y ajusta tu nombre visible o nombre de usuario.
-            </p>
-          </div>
-          <div className="flex flex-col items-end gap-1">
-            <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">
-              Idioma
-            </span>
-            <select
-              value={lang}
-              onChange={e => setLang(e.target.value === 'en' ? 'en' : 'es')}
-              className="text-[11px] border border-gray-200 rounded-lg px-2 py-1 bg-white"
-            >
-              <option value="es">Español</option>
-              <option value="en">English</option>
-            </select>
+    <div
+      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-start justify-center px-3 pb-3 overflow-y-auto"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}
+    >
+      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 relative max-h-[calc(100vh-env(safe-area-inset-top,0px)-1.5rem)] overflow-y-auto no-scrollbar">
+        <div className="sticky top-0 z-20 bg-white pb-2 mb-2 border-b border-gray-100">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-bold text-emerald-900 mb-1">Tu perfil</h2>
+              <p className="text-xs text-gray-500">
+                Revisa tus datos de cuenta y ajusta tu nombre visible o nombre de usuario.
+              </p>
+            </div>
+            <div className="flex items-start gap-2">
+              <div className="flex flex-col items-end gap-1">
+                <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">
+                  Idioma
+                </span>
+                <select
+                  value={lang}
+                  onChange={e => setLang(e.target.value === 'en' ? 'en' : 'es')}
+                  className="text-[11px] border border-gray-200 rounded-lg px-2 py-1 bg-white"
+                >
+                  <option value="es">Español</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600 mt-0.5"
+                aria-label="Cerrar perfil"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -366,7 +372,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
           </div>
         )}
 
-        <div className="mt-6 pt-3 border-t border-gray-100">
+        <div className="mt-6 pt-3 border-t border-gray-100 sticky bottom-0 bg-white">
           <button
             onClick={async () => {
               await signOut();

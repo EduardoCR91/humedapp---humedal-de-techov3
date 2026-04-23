@@ -192,7 +192,7 @@ const Participation: React.FC = () => {
     <div className="animate-fadeIn">
       <button
         onClick={() => vm.setView('feed')}
-        className="mb-6 flex gap-2 items-center text-gray-400"
+        className="mb-6 flex gap-2 items-center text-black-400"
       >
         <ChevronLeft />
         {lang === 'en' ? 'Back' : 'Volver'}

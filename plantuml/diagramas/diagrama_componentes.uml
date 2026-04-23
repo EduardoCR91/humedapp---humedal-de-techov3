@@ -1,4 +1,5 @@
 @startuml
+title Figura 13. Diagrama de componentes EcoVigia
 package "Frontend (React App)" {
     [App Component] as App
     [Navigation System] as Nav

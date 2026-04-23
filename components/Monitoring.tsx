@@ -621,6 +621,21 @@ const Monitoring: React.FC = () => {
         )}
       </div>
 
+      <div className="mb-4">
+        <button
+          onClick={() => {
+            setIsReporting(true);
+            setTempMarkerCoords(null);
+          }}
+          className="w-full bg-emerald-600 text-white px-4 py-3 rounded-2xl shadow-md active:scale-[0.99] transition-all hover:bg-emerald-700 flex items-center justify-center gap-2"
+        >
+          <PlusCircle size={20} />
+          <span className="text-xs font-semibold uppercase tracking-wide">
+            {lang === 'en' ? 'Create report' : 'Reportar'}
+          </span>
+        </button>
+      </div>
+
       <div className="space-y-4 mb-6">
         {pagedReports.map(report => {
           const isOwner =
@@ -722,16 +737,6 @@ const Monitoring: React.FC = () => {
             </div>
           );
         })}
-      </div>
-
-      <div className="fixed bottom-24 right-6 flex flex-col gap-4 z-40">
-        <button 
-          onClick={() => { setIsReporting(true); setTempMarkerCoords(null); }} 
-          className="bg-emerald-600 text-white px-4 py-3 rounded-full shadow-2xl active:scale-95 transition-all hover:bg-emerald-700 flex items-center gap-2"
-        >
-          <PlusCircle size={20}/>
-          <span className="text-xs font-semibold uppercase tracking-wide">Reportar</span>
-        </button>
       </div>
 
       {isReporting && (

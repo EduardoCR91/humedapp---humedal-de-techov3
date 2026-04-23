@@ -6,14 +6,91 @@
  * NOTA: Llamar a la API de Groq directamente desde el cliente expone la API key
  * en el bundle; es aceptable solo para demos/prototipos como este proyecto académico.
  */
+import { Capacitor, CapacitorHttp } from '@capacitor/core';
+
 const apiKey = import.meta.env.VITE_GROQ_API_KEY as string | undefined;
 
 const CHAT_MODEL = "llama-3.1-8b-instant";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
+const isApiKeyMissing = () =>
+  !apiKey ||
+  !apiKey.trim() ||
+  apiKey.trim() === "GROQ_API_KEY_AQUI";
+
+const parseBodyText = (payload: any) => {
+  if (typeof payload === 'string') return payload;
+  try {
+    return JSON.stringify(payload ?? {});
+  } catch {
+    return '';
+  }
+};
+
+const requestGroq = async (body: any) => {
+  if (Capacitor.isNativePlatform()) {
+    const nativeResp = await CapacitorHttp.request({
+      method: 'POST',
+      url: GROQ_URL,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      data: body,
+      connectTimeout: 20000,
+      readTimeout: 30000,
+    });
+
+    const ok = nativeResp.status >= 200 && nativeResp.status < 300;
+    const text = parseBodyText(nativeResp.data);
+    return { ok, status: nativeResp.status, text };
+  }
+
+  const webResp = await fetch(GROQ_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  return {
+    ok: webResp.ok,
+    status: webResp.status,
+    text: await webResp.text(),
+  };
+};
+
+const getFriendlyGroqError = (status: number, details: string, lang: "es" | "en") => {
+  const low = details.toLowerCase();
+
+  if (status === 401 || status === 403) {
+    return lang === "en"
+      ? "EcoBot cannot connect because the Groq API key is invalid or expired."
+      : "EcoBot no puede conectarse porque la API key de Groq es invalida o expiro.";
+  }
+
+  if (status === 429 || low.includes("rate limit") || low.includes("quota")) {
+    return lang === "en"
+      ? "EcoBot reached the Groq usage limit. Please wait or check your plan/quota."
+      : "EcoBot alcanzo el limite de uso en Groq. Espera unos minutos o revisa tu plan/cuota.";
+  }
+
+  if (status === 400 || low.includes("model")) {
+    return lang === "en"
+      ? "EcoBot could not use the configured model. Verify the model name in Groq."
+      : "EcoBot no pudo usar el modelo configurado. Verifica el nombre del modelo en Groq.";
+  }
+
+  return lang === "en"
+    ? "EcoBot could not generate a response at this moment."
+    : "EcoBot no pudo generar una respuesta en este momento.";
+};
+
 export const getGeminiResponse = async (prompt: string, lang: "es" | "en") => {
   try {
-    if (!apiKey) {
+    if (isApiKeyMissing()) {
       console.error(
         "Groq API key is not configured. Set VITE_GROQ_API_KEY in your environment."
       );
@@ -49,23 +126,14 @@ Si te preguntan algo fuera del contexto de humedales o Bogotá, responde muy bre
       ],
     };
 
-    const resp = await fetch(GROQ_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(body),
-    });
+    const resp = await requestGroq(body);
 
     if (!resp.ok) {
-      console.error("Groq API HTTP error:", resp.status, await resp.text());
-      return lang === "en"
-        ? "EcoBot could not generate a response at this moment."
-        : "EcoBot no pudo generar una respuesta en este momento.";
+      console.error("Groq API HTTP error:", resp.status, resp.text);
+      return getFriendlyGroqError(resp.status, resp.text, lang);
     }
 
-    const data: any = await resp.json();
+    const data: any = JSON.parse(resp.text || '{}');
     const content: string =
       data.choices?.[0]?.message?.content?.toString().trim() ?? "";
 
@@ -78,6 +146,11 @@ Si te preguntan algo fuera del contexto de humedales o Bogotá, responde muy bre
     return content;
   } catch (error) {
     console.error("Groq API Error:", error);
+    if (error instanceof TypeError) {
+      return lang === "en"
+        ? "EcoBot could not reach Groq. Check internet connection, CORS, or HTTPS settings."
+        : "EcoBot no pudo conectarse a Groq. Revisa internet, CORS o configuracion HTTPS.";
+    }
     return lang === "en"
       ? "Sorry, I had a problem processing your question."
       : "Lo siento, tuve un problema al procesar tu consulta.";
@@ -90,7 +163,7 @@ Si te preguntan algo fuera del contexto de humedales o Bogotá, responde muy bre
  */
 export const getWetlandWeather = async () => {
   try {
-    if (!apiKey) {
+    if (isApiKeyMissing()) {
       console.warn(
         "Weather service: Groq API key is not configured (VITE_GROQ_API_KEY)."
       );
@@ -106,21 +179,13 @@ export const getWetlandWeather = async () => {
       messages: [{ role: "user", content: weatherPrompt }],
     };
 
-    const resp = await fetch(GROQ_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(body),
-    });
-
+    const resp = await requestGroq(body);
     if (!resp.ok) {
-      console.error("Groq weather HTTP error:", resp.status, await resp.text());
+      console.error("Groq weather HTTP error:", resp.status, resp.text);
       return null;
     }
 
-    const data: any = await resp.json();
+    const data: any = JSON.parse(resp.text || '{}');
     const raw = data.choices?.[0]?.message?.content ?? "";
     const jsonStr = raw.toString().trim();
 

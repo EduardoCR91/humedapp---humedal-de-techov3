@@ -1,0 +1,31 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Modelo C4 (Nivel 2) - Diagrama de Contenedores de EcoVigia
+
+Person(ciudadano, "Usuario Ciudadano", "Usuario final que despliega la aplicación sobre Android 7+")
+
+System_Boundary(ecovigia_boundary, "Ecosistema EcoVigia") {
+    
+    Container(mobile_app, "Aplicación Móvil (APK)", "React 19, TypeScript, Capacitor", "El componente instalable SPA que consolida todas las vistas de React e interactúa con el hardware nato del teléfono (Cámara, GPS).")
+    
+    Container(auth_module, "Módulo de Seguridad", "Vite AuthContext", "Manejador local para las credenciales encriptadas del JWT Session y la capa de guardias protectoras.")
+
+}
+
+System_Ext(supabase_backend, "Backend Supabase (BaaS)", "PostgreSQL, GoTrue, S3", "Microservicios que resguardan de forma atómica y relacional los usuarios y reportes visuales.")
+
+System_Ext(gemini_api, "Google Cloud NLP", "API Vertex/Gemini", "Orquestador de análisis y generación de lenguaje sobre humedales.")
+
+System_Ext(leaflet_maps, "Leaflet Maps", "OSM Tiles", "Mallas de imágenes geo-coordinadas.")
+
+Rel(ciudadano, mobile_app, "Usa la pantalla táctil y hardware del dispositivo", "Interacción Humana")
+
+Rel(mobile_app, auth_module, "Llama validaciones para acceder a funciones del sistema")
+Rel(auth_module, supabase_backend, "Autentica llaves secretas HTTPS", "Token Request")
+
+Rel(mobile_app, supabase_backend, "Persiste denuncias (coordenadas, imágenes, texto) en vivo", "Data API / REST")
+Rel(mobile_app, gemini_api, "Sustrae texto para el Chatbot", "JSON over HTTPS")
+Rel(mobile_app, leaflet_maps, "Extrae cuadrículas de mapa vía geolocalización", "HTTP GET")
+
+@enduml
