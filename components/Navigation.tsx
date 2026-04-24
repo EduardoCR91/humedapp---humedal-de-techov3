@@ -22,23 +22,28 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-emerald-100 flex justify-around items-center px-2 py-3 pb-6 shadow-lg z-50">
-      {navItems.map(({ id, icon: Icon, labelKey, fallback }) => (
-        <button
-          key={id}
-          onClick={() => setActiveTab(id)}
-          className={`flex flex-col items-center gap-1 transition-colors ${
-            activeTab === id ? 'text-emerald-600' : 'text-gray-400'
-          }`}
-        >
-          <Icon size={24} className={activeTab === id ? 'fill-emerald-100' : ''} />
-          {activeTab === id && (
-            <span className="text-[10px] font-medium uppercase tracking-tighter">
-              {t(labelKey, fallback)}
-            </span>
-          )}
-        </button>
-      ))}
+    <nav
+      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-50 px-4 pb-3"
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)' }}
+    >
+      <div className="bg-white/95 backdrop-blur-md border border-white rounded-[26px] px-2 py-2 shadow-[0_-6px_24px_rgba(0,0,0,0.2)] flex justify-around items-center">
+        {navItems.map(({ id, icon: Icon, labelKey, fallback }) => (
+          <button
+            key={id}
+            onClick={() => setActiveTab(id)}
+            className={`flex flex-col items-center gap-0.5 transition-colors min-w-[44px] ${
+              activeTab === id ? 'text-emerald-700' : 'text-slate-500'
+            }`}
+          >
+            <Icon size={22} className={activeTab === id ? 'stroke-[2.5]' : ''} />
+            {activeTab === id && (
+              <span className="text-[9px] font-semibold uppercase tracking-tight">
+                {t(labelKey, fallback)}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
     </nav>
   );
 };

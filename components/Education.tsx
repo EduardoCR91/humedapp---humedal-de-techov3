@@ -1,11 +1,13 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  BookOpen,
+  Bird,
+  Sprout,
+  Bug,
+  Droplets,
   CalendarDays,
   Clock,
   MapPin,
-  Bird,
   PlusCircle,
   Image as ImageIcon,
   Edit2,
@@ -46,34 +48,45 @@ const Education: React.FC = () => {
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<TopicId | null>(null);
 
-  const categories: { id: TopicId; title: string; emoji: string; color: string; summary: string }[] =
+  const categories: {
+    id: TopicId;
+    title: string;
+    icon: React.ComponentType<any>;
+    accent: string;
+    card: string;
+    summary: string;
+  }[] =
     [
       {
         id: 'aves',
         title: 'Aves',
-        emoji: '🐦',
-        color: 'bg-blue-500',
+        icon: Bird,
+        accent: 'text-sky-600',
+        card: 'bg-[linear-gradient(145deg,rgba(227,242,255,0.86),rgba(255,255,255,0.82))]',
         summary: 'Más de 30 especies visitan y habitan el humedal.',
       },
       {
         id: 'plantas',
         title: 'Plantas',
-        emoji: '🌿',
-        color: 'bg-emerald-500',
+        icon: Sprout,
+        accent: 'text-emerald-600',
+        card: 'bg-[linear-gradient(145deg,rgba(222,246,233,0.88),rgba(255,255,255,0.82))]',
         summary: 'Plantas acuáticas y árboles nativos que mantienen vivo el humedal.',
       },
       {
         id: 'anfibios',
         title: 'Anfibios',
-        emoji: '🐸',
-        color: 'bg-yellow-600',
+        icon: Droplets,
+        accent: 'text-amber-600',
+        card: 'bg-[linear-gradient(145deg,rgba(255,243,216,0.9),rgba(255,255,255,0.82))]',
         summary: 'Indicadores de salud ambiental como la rana sabanera.',
       },
       {
         id: 'insectos',
         title: 'Insectos',
-        emoji: '🐝',
-        color: 'bg-purple-500',
+        icon: Bug,
+        accent: 'text-violet-600',
+        card: 'bg-[linear-gradient(145deg,rgba(240,232,255,0.9),rgba(255,255,255,0.82))]',
         summary: 'Polinizadores, mariposas y escarabajos que sostienen la cadena alimenticia.',
       },
     ];
@@ -275,23 +288,24 @@ const Education: React.FC = () => {
       )}
       
       <div className="grid grid-cols-2 gap-4 mb-8">
-        {categories.map(cat => (
+        {categories.map(cat => {
+          const TopicIcon = cat.icon;
+          return (
           <button
             key={cat.id}
             onClick={() => setSelectedTopic(cat.id)}
-            className="bg-white p-4 rounded-2xl shadow-sm border border-emerald-50 flex flex-col items-center active:scale-[0.98] transition-transform"
+            className={`p-4 rounded-2xl border border-white/75 shadow-[0_8px_22px_rgba(13,30,20,0.14)] backdrop-blur-sm flex flex-col items-center active:scale-[0.98] transition-transform ${cat.card}`}
           >
-            <div
-              className={`w-10 h-10 ${cat.color} rounded-full mb-2 flex items-center justify-center text-white text-lg`}
-            >
-              {cat.emoji}
+            <div className={`w-11 h-11 rounded-2xl mb-2 flex items-center justify-center bg-white/70 ${cat.accent}`}>
+              <TopicIcon size={22} strokeWidth={2.2} />
             </div>
             <span className="font-bold text-gray-800 text-sm">{cat.title}</span>
             <span className="text-[10px] text-gray-500 mt-1 text-center">
               {cat.summary}
             </span>
           </button>
-        ))}
+          );
+        })}
       </div>
 
       <section className="mt-2">
@@ -305,7 +319,7 @@ const Education: React.FC = () => {
         {isAdmin && (
           <form
             onSubmit={handleCreateEvent}
-            className="mb-6 bg-white border border-emerald-50 rounded-3xl p-4 shadow-sm space-y-3"
+            className="mb-6 eco-card rounded-3xl p-4 space-y-3"
           >
             <div className="flex items-center gap-2 mb-1">
               <PlusCircle size={18} className="text-emerald-600" />
@@ -401,7 +415,7 @@ const Education: React.FC = () => {
         {loadingEvents ? (
           <p className="text-xs text-gray-500">Cargando eventos...</p>
         ) : upcomingEvents.length === 0 && pastEvents.length === 0 ? (
-          <div className="flex flex-col items-center justify-center bg-white border border-emerald-50 rounded-3xl p-6 text-center text-gray-500">
+          <div className="flex flex-col items-center justify-center eco-card rounded-3xl p-6 text-center text-gray-500">
             <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-3 relative">
               <Bird size={28} className="text-emerald-500" />
               <span className="absolute -right-1 -top-1 bg-white border border-emerald-200 rounded-full w-5 h-5 flex items-center justify-center text-[10px] text-emerald-600 font-bold">
@@ -422,7 +436,7 @@ const Education: React.FC = () => {
                   {upcomingEvents.map(ev => (
                     <div
                       key={ev.id}
-                      className="bg-white border border-emerald-50 rounded-3xl p-4 shadow-sm flex gap-3"
+                      className="eco-card-soft rounded-3xl p-4 flex gap-3"
                     >
                       <div className="w-20 h-20 rounded-2xl overflow-hidden bg-emerald-50 flex items-center justify-center shrink-0">
                         {ev.imageUrl ? (
@@ -525,7 +539,7 @@ const Education: React.FC = () => {
             {pastEvents.length > 0 && (
               <div className="mt-4">
                 <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2 flex items-center gap-1">
-                  <BookOpen size={12} />
+                  <CalendarDays size={12} />
                   Eventos pasados
                 </h4>
                 <div className="flex flex-col gap-2">
@@ -558,7 +572,7 @@ const Education: React.FC = () => {
           onClick={() => setSelectedTopic(null)}
         >
           <div
-            className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-5 max-h-[80vh] overflow-y-auto"
+            className="eco-card rounded-3xl max-w-md w-full p-5 max-h-[80vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
             <button

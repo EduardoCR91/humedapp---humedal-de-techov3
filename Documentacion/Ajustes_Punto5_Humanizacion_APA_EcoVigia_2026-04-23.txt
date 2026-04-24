@@ -1,0 +1,149 @@
+PROYECTO DE GRADO ECOVIGIA
+Ajuste del Punto 5 + Revisión de redacción y normas APA
+Fecha: 23 de abril de 2026
+
+====================================================================
+5. IMPLEMENTACIÓN
+====================================================================
+
+5.1 Herramientas utilizadas en el desarrollo del proyecto
+
+La implementación de EcoVigia se realizó con una arquitectura web móvil (PWA + empaquetado Android) para acelerar el desarrollo, facilitar pruebas en campo y mantener una base de código única. A continuación, se describen las herramientas realmente usadas en el proyecto y su función:
+
+- React 19 + TypeScript
+  Se utilizaron para construir la interfaz y la lógica de la aplicación con componentes reutilizables, tipado estático y mejor mantenibilidad.
+
+- Vite
+  Se usó como entorno de desarrollo y compilación por su rapidez en recarga y generación de builds para producción.
+
+- Tailwind CSS
+  Permitió diseñar interfaces responsivas y consistentes en todos los módulos (Inicio, Monitoreo, Educación, Comunidad, Memoria y Chatbot).
+
+- Capacitor (Android)
+  Se empleó para empaquetar la aplicación en Android Studio y habilitar acceso a funciones nativas del dispositivo, como geolocalización y cámara.
+
+- Leaflet + OpenStreetMap
+  Se integró para la visualización cartográfica del humedal, los puntos de reporte y la navegación dentro del módulo de monitoreo.
+
+- Supabase
+  Se utilizó como backend principal para autenticación de usuarios, almacenamiento de perfiles, reportes, publicaciones de comunidad, noticias y eventos.
+
+- Servicio de IA (Groq)
+  Se configuró para la generación de respuestas del chatbot EcoBot con soporte bilingüe (español/inglés).
+
+- Git + GitHub
+  Se usaron para control de versiones, trazabilidad de cambios y respaldo continuo del código.
+
+- PlantUML
+  Se usó para construir y mantener diagramas técnicos (casos de uso, componentes, actividades, clases y despliegue).
+
+Resultado de implementación:
+La app quedó operativa en entorno web y Android, con autenticación, creación de reportes georreferenciados, consultas comunitarias, panel de perfil, módulo educativo, módulo memoria, noticias/eventos administrables y chatbot integrado.
+
+
+5.2 Requisitos del hardware
+
+Para dejar el alcance claro, se separan los requisitos en dos contextos: desarrollo y uso final.
+
+A) Requisitos para desarrollo y pruebas técnicas
+
+Mínimos:
+- Procesador: Intel Core i5 (8ª gen) o equivalente AMD Ryzen 5
+- Memoria RAM: 8 GB
+- Almacenamiento libre: 20 GB
+- Sistema operativo: Windows 10/11, macOS 12+ o Linux moderno
+- Herramientas instaladas: Node.js 20+, npm, Android Studio, JDK 17
+- Conectividad: internet estable para Supabase, mapas e IA
+
+Recomendados:
+- Procesador: Intel Core i7 / Apple Silicon M1 o superior
+- Memoria RAM: 16 GB o más
+- SSD con 40 GB libres para emuladores y builds
+
+B) Requisitos para usuario final (app Android)
+
+Mínimos:
+- Android 10 o superior
+- RAM: 3 GB
+- Almacenamiento libre: 300 MB
+- GPS habilitado para geolocalización de reportes
+- Cámara funcional para evidencia fotográfica
+- Conexión a internet para funciones en línea (chatbot, sincronización, noticias y comunidad)
+
+Recomendados:
+- Android 12 o superior
+- RAM: 4 GB o más
+- Conectividad 4G/5G o Wi-Fi estable
+
+Nota funcional:
+El modo offline permite consultar módulos informativos (por ejemplo, memoria, parte de educación y contenido previamente cargado). Las funciones de publicación, autenticación remota y chatbot requieren conexión.
+
+
+====================================================================
+REVISIÓN DE HUMANIZACIÓN (RESTO DEL DOCUMENTO)
+====================================================================
+
+Se revisó el contenido general del PDF “Proyecto Grado EcoVigia (2)” y sí hay secciones que conviene humanizar para que suenen más naturales, sin perder rigor técnico.
+
+Secciones que más lo necesitan:
+1) Breve síntesis del proyecto (1.2)
+   Motivo: está redactada como bloque muy institucional y denso.
+
+2) Metodología (2.4)
+   Motivo: usa lenguaje demasiado enciclopédico en varios apartados (“fundamentación teórica”, “ecosistema Scrum”, etc.).
+
+3) Introducción de requisitos funcionales (sección 3)
+   Motivo: se percibe correcta técnicamente, pero fría para un jurado académico no técnico.
+
+Ajuste aplicado en esta entrega:
+- Se dejó desarrollado el Punto 5 con tono técnico-humano (claro, directo y verificable).
+- Se recomienda usar este mismo estilo en las secciones 1.2, 2.4 y 3 para mantener coherencia narrativa.
+
+Guía breve para humanizar sin perder nivel académico:
+- Preferir frases cortas y concretas.
+- Explicar “qué se hizo” + “por qué se hizo” + “qué resultado produjo”.
+- Evitar párrafos demasiado largos con términos abstractos repetidos.
+- Mantener evidencia técnica (stack, módulos, resultados), pero con lenguaje directo.
+
+
+====================================================================
+REVISIÓN DE NORMAS APA (VALIDACIÓN Y AJUSTES NECESARIOS)
+====================================================================
+
+Estado general:
+- El documento ya tiene estructura base útil (figuras, notas y bibliografía), pero hay ajustes APA pendientes.
+
+Ajustes clave detectados:
+1) Numeración de figuras
+   - Se detecta duplicidad en la numeración (por ejemplo, “Figura 27” repetida).
+   - Acción: renumerar en secuencia continua para evitar inconsistencias de citación cruzada.
+
+2) Formato de títulos de figura
+   - Recomendación APA 7: usar “Figura X” y título claro, consistente y sin variaciones innecesarias.
+   - Acción: estandarizar todos los pies de figura con misma estructura.
+
+3) Notas bajo figura
+   - Varias figuras ya tienen “Nota. Fuente: Elaboración propia.”, lo cual está bien.
+   - Acción: mantener el mismo patrón en todas las figuras, sin omisiones.
+
+4) Coherencia entre texto y figuras
+   - Acción: cada figura debe estar mencionada dentro del texto antes de aparecer.
+
+5) Bibliografía
+   - Acción: verificar formato homogéneo autor-fecha-título-fuente/enlace (APA 7) y eliminar referencias incompletas.
+
+Plantilla recomendada para figuras (APA 7):
+Figura X
+[Título de la figura]
+[Imagen/diagrama]
+Nota. Elaboración propia.
+
+Conclusión de validación APA:
+El documento es recuperable y está bien encaminado. No requiere rehacerse desde cero, pero sí necesita una pasada final de normalización de figuras, consistencia de notas y depuración de bibliografía para quedar sólido en sustentación.
+
+
+====================================================================
+CIERRE
+====================================================================
+
+Este archivo deja listo el Punto 5 para integrar en el documento principal y añade una revisión concreta de humanización y APA para la versión final de entrega.

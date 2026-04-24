@@ -101,7 +101,7 @@ const Culture: React.FC = () => {
         {lang === 'en' ? 'Culture and Memory' : 'Cultura y Memoria'}
       </h2>
       
-      <p className="text-sm text-black bg-emerald-50 p-4 rounded-2xl mb-6 leading-relaxed">
+      <p className="text-sm text-black eco-card-soft p-4 rounded-2xl mb-6 leading-relaxed">
         {lang === 'en'
           ? 'The Techo Wetland is a sacred place full of history. Here we remember the stories of our ancestors and the evolution of the ecosystem.'
           : 'El Humedal de Techo es un espacio sagrado y cargado de historia. Aquí recuperamos las historias de nuestros ancestros y la evolución del ecosistema.'}
@@ -119,7 +119,7 @@ const Culture: React.FC = () => {
               <button
                 key={event.id}
                 onClick={() => setSelectedEvent(event)}
-                className="w-full text-left bg-white p-3 rounded-2xl border border-emerald-50 shadow-sm flex gap-3 items-start active:scale-[0.99] transition-transform"
+                className="w-full text-left eco-card-soft p-3 rounded-2xl flex gap-3 items-start active:scale-[0.99] transition-transform"
               >
                 <div className="p-3 rounded-xl bg-emerald-50 text-emerald-700 shrink-0">
                   <Icon size={20} />
@@ -141,7 +141,7 @@ const Culture: React.FC = () => {
 
       {selectedEvent && (
         <div className="fixed inset-0 z-[2500] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-5 relative">
+          <div className="eco-card rounded-3xl max-w-md w-full p-5 relative">
             <button
               onClick={() => setSelectedEvent(null)}
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"

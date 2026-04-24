@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Heart, Edit2, ChevronLeft, Check, Trash2 } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Heart, Edit2, ChevronLeft, Trash2, ChevronRight } from 'lucide-react';
 import { useParticipationViewModel } from '../useParticipationViewModel';
 import { useAuth } from './AuthContext';
 import { useNetworkStatus } from './useNetworkStatus';
@@ -13,6 +13,24 @@ const Participation: React.FC = () => {
   const { lang } = useLanguage();
   const [newQuestion, setNewQuestion] = useState('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [commentsPage, setCommentsPage] = useState(0);
+  const PAGE_SIZE = 5;
+
+  useEffect(() => {
+    setCommentsPage(0);
+  }, [vm.sortMode]);
+
+  const pagedPosts = useMemo(
+    () => vm.posts.slice(commentsPage * PAGE_SIZE, commentsPage * PAGE_SIZE + PAGE_SIZE),
+    [vm.posts, commentsPage]
+  );
+  const totalPages = Math.max(1, Math.ceil(vm.posts.length / PAGE_SIZE));
+
+  useEffect(() => {
+    if (commentsPage > totalPages - 1) {
+      setCommentsPage(Math.max(0, totalPages - 1));
+    }
+  }, [commentsPage, totalPages]);
 
   const renderFeed = () => (
     <div className="animate-fadeIn text-black">
@@ -20,7 +38,7 @@ const Participation: React.FC = () => {
         <h2 className="text-2xl font-bold text-black">
           {lang === 'en' ? 'Community' : 'Comunidad'}
         </h2>
-        <button onClick={() => vm.setView('profile')} className="flex items-center gap-2 bg-white p-1.5 pr-3 rounded-full border shadow-sm">
+        <button onClick={() => vm.setView('profile')} className="flex items-center gap-2 eco-card p-1.5 pr-3 rounded-full">
           <img src={vm.profile.avatar} className="w-8 h-8 rounded-full" alt="profile"/>
           <span className="text-xs font-bold">{vm.profile.name}</span>
         </button>
@@ -62,7 +80,7 @@ const Participation: React.FC = () => {
           </button>
         </div>
 
-        <div className="bg-white p-3 rounded-2xl border border-emerald-50 shadow-sm mb-4">
+        <div className="eco-card p-3 rounded-2xl mb-4">
           <textarea
             value={newQuestion}
             onChange={e => setNewQuestion(e.target.value)}
@@ -121,12 +139,12 @@ const Participation: React.FC = () => {
       </div>
 
       <div className="space-y-4">
-        {vm.posts.map(post => {
+        {pagedPosts.map(post => {
           const isOwner =
             !!user && !!post.ownerId && post.ownerId === user.id;
 
           return (
-            <div key={post.id} className="bg-white p-4 rounded-2xl border shadow-sm">
+            <div key={post.id} className="eco-card-soft p-4 rounded-2xl">
               <div className="flex justify-between items-start mb-2 gap-2">
                 <div className="flex gap-2 items-center">
                   <div className="w-8 h-8 rounded-full bg-emerald-100 overflow-hidden">
@@ -184,6 +202,28 @@ const Participation: React.FC = () => {
             </div>
           );
         })}
+        {vm.posts.length > PAGE_SIZE && (
+          <div className="flex items-center justify-center gap-3 pt-1">
+            <button
+              onClick={() => setCommentsPage(p => Math.max(0, p - 1))}
+              disabled={commentsPage === 0}
+              className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/80 border border-white disabled:opacity-40"
+            >
+              {lang === 'en' ? 'Previous' : 'Anterior'}
+            </button>
+            <span className="text-[11px] text-gray-600">
+              {commentsPage + 1} / {totalPages}
+            </span>
+            <button
+              onClick={() => setCommentsPage(p => Math.min(totalPages - 1, p + 1))}
+              disabled={commentsPage >= totalPages - 1}
+              className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/80 border border-white disabled:opacity-40 flex items-center gap-1"
+            >
+              {lang === 'en' ? 'Next' : 'Siguiente'}
+              <ChevronRight size={12} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -197,7 +237,7 @@ const Participation: React.FC = () => {
         <ChevronLeft />
         {lang === 'en' ? 'Back' : 'Volver'}
       </button>
-      <div className="bg-white rounded-3xl p-6 text-center shadow-sm border mb-6">
+      <div className="eco-card rounded-3xl p-6 text-center mb-6">
         <img src={vm.profile.avatar} className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-emerald-50" alt="profile"/>
         <h3 className="text-xl font-bold">{vm.profile.name}</h3>
         <p className="text-[11px] text-gray-400">
@@ -226,13 +266,13 @@ const Participation: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white p-4 rounded-2xl text-center shadow-xs border">
+        <div className="eco-card-soft p-4 rounded-2xl text-center">
           <span className="block font-black text-emerald-600 text-xl">{vm.profile.reportsCount}</span>
           <span className="text-[10px] text-gray-400 uppercase">
             {lang === 'en' ? 'Reports' : 'Reportes'}
           </span>
         </div>
-        <div className="bg-white p-4 rounded-2xl text-center shadow-xs border">
+        <div className="eco-card-soft p-4 rounded-2xl text-center">
           <span className="block font-black text-blue-600 text-xl">{vm.profile.points}</span>
           <span className="text-[10px] text-gray-400 uppercase">
             {lang === 'en' ? 'likes' : 'likes'}
@@ -241,7 +281,7 @@ const Participation: React.FC = () => {
       </div>
 
       {vm.topReport && (
-        <div className="mt-6 bg-white p-4 rounded-2xl shadow-xs border text-left">
+        <div className="mt-6 eco-card-soft p-4 rounded-2xl text-left">
           <p className="text-[11px] font-semibold text-gray-500 uppercase mb-1">
             {lang === 'en' ? 'Report with most likes' : 'Reporte con más likes'}
           </p>

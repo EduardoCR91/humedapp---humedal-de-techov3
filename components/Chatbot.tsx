@@ -85,12 +85,12 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] animate-fadeIn">
-      <div className="bg-emerald-600 p-4 text-white shrink-0">
-        <h2 className="text-lg font-bold">
+    <div className="flex flex-col h-[calc(100vh-140px)] animate-fadeIn px-3 pb-2">
+      <div className="eco-card rounded-[22px] p-4 text-emerald-950 shrink-0 mb-3">
+        <h2 className="text-lg font-extrabold">
           {lang === 'en' ? 'EcoBot Assistant' : 'Asistente EcoBot'}
         </h2>
-        <p className="text-xs text-emerald-100">
+        <p className="text-xs text-slate-600">
           {lang === 'en'
             ? 'Powered by Proyección Social Uniagustiniana'
             : 'Impulsado por Proyección Social Uniagustiniana'}
@@ -99,7 +99,7 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
 
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 no-scrollbar"
+        className="flex-1 overflow-y-auto p-2 space-y-4 no-scrollbar"
       >
         {messages.map((msg, idx) => (
           <div 
@@ -107,13 +107,13 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div className={`flex gap-2 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-              <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.role === 'user' ? 'bg-emerald-100 text-emerald-600' : 'bg-emerald-600 text-white'}`}>
+              <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.role === 'user' ? 'bg-emerald-100/95 text-emerald-700' : 'bg-emerald-700 text-white'}`}>
                 {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
               </div>
               <div className={`p-3 rounded-2xl text-sm shadow-sm ${
                 msg.role === 'user' 
-                  ? 'bg-emerald-600 text-white rounded-tr-none' 
-                  : 'bg-white text-gray-800 rounded-tl-none border border-emerald-50'
+                  ? 'bg-emerald-700/95 text-white rounded-tr-none shadow-[0_8px_20px_rgba(6,78,59,0.28)]'
+                  : 'eco-card text-gray-800 rounded-tl-none'
               } whitespace-pre-wrap leading-relaxed`}>
                 {msg.text}
               </div>
@@ -122,7 +122,7 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="flex gap-2 items-center bg-white p-3 rounded-2xl border border-emerald-50 text-emerald-600 text-sm shadow-sm">
+            <div className="flex gap-2 items-center eco-card-soft p-3 rounded-2xl text-emerald-600 text-sm">
               <Loader2 size={16} className="animate-spin" />
               <span>
                 {lang === 'en' ? 'EcoBot is thinking...' : 'EcoBot está pensando...'}
@@ -132,7 +132,7 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
         )}
       </div>
 
-      <div className="p-4 bg-white border-t border-emerald-100 flex gap-2">
+      <div className="mt-2 p-3 eco-card rounded-[22px] flex gap-2">
         <input 
           type="text"
           value={input}
@@ -141,12 +141,12 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
           placeholder={
             lang === 'en' ? 'Ask about flora, fauna...' : 'Pregunta sobre flora, fauna...'
           }
-          className="flex-1 bg-gray-100 px-4 py-2 rounded-full text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+          className="flex-1 bg-white/85 border border-white px-4 py-2 rounded-full text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
         />
         <button 
           onClick={handleSend}
           disabled={loading || !input.trim()}
-          className="bg-emerald-600 text-white p-2.5 rounded-full disabled:opacity-50 shadow-md"
+          className="bg-emerald-700 text-white p-2.5 rounded-full disabled:opacity-50 shadow-md"
         >
           <Send size={20} />
         </button>

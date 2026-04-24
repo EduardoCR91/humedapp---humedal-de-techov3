@@ -8,6 +8,7 @@ import {
   Eye,
   Bird,
   Leaf,
+  ChevronRight,
   Newspaper,
   PlusCircle,
   Image as ImageIcon,
@@ -310,10 +311,10 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-4 animate-fadeIn text-black">
+    <div className="flex flex-col gap-5 p-4 animate-fadeIn text-black">
       <header className="flex flex-col gap-1">
-        <h1 className="text-3xl font-bold text-black">EcoVigia!</h1>
-        <p className="text-black">
+        <h1 className="text-5xl leading-[0.95] font-black text-emerald-950 tracking-tight">EcoVigia!</h1>
+        <p className="text-slate-600 text-base">
           {lang === 'en'
             ? 'Explore and protect the Techo Wetland'
             : 'Explora y protege el Humedal de Techo'}
@@ -321,27 +322,27 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       </header>
 
       {/* Weather & Env Stats (Mocked) */}
-      <section className="bg-white p-4 rounded-2xl shadow-sm border border-emerald-50 flex justify-between items-center">
+      <section className="eco-card p-4 rounded-[24px] flex justify-between items-center">
         <div className="flex flex-col items-center gap-1">
-          <Sun className="text-yellow-500" size={24} />
-          <span className="text-sm font-semibold">18°C</span>
-          <span className="text-[10px] text-gray-500">
+          <Sun className="text-amber-400" size={28} />
+          <span className="text-[32px] font-extrabold text-slate-800">18°C</span>
+          <span className="text-[12px] text-slate-500 font-medium">
             {lang === 'en' ? 'Sunny' : 'Soleado'}
           </span>
         </div>
-        <div className="h-10 w-[1px] bg-gray-100" />
+        <div className="h-14 w-[1px] bg-slate-200" />
         <div className="flex flex-col items-center gap-1">
-          <Droplets className="text-blue-500" size={24} />
-          <span className="text-sm font-semibold">65%</span>
-          <span className="text-[10px] text-gray-500">
+          <Droplets className="text-emerald-500" size={28} />
+          <span className="text-[32px] font-extrabold text-slate-800">65%</span>
+          <span className="text-[12px] text-slate-500 font-medium">
             {lang === 'en' ? 'Humidity' : 'Humedad'}
           </span>
         </div>
-        <div className="h-10 w-[1px] bg-gray-100" />
+        <div className="h-14 w-[1px] bg-slate-200" />
         <div className="flex flex-col items-center gap-1">
-          <Wind className="text-emerald-500" size={24} />
-          <span className="text-sm font-semibold">12 km/h</span>
-          <span className="text-[10px] text-gray-500">
+          <Wind className="text-emerald-500" size={28} />
+          <span className="text-[32px] font-extrabold text-slate-800">12 km/h</span>
+          <span className="text-[12px] text-slate-500 font-medium">
             {lang === 'en' ? 'Air quality' : 'Calidad Aire'}
           </span>
         </div>
@@ -349,37 +350,40 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
 
       {/* Featured Card */}
       <div
-        className="relative h-48 rounded-3xl overflow-hidden shadow-md cursor-pointer group"
+        className="relative h-56 rounded-[26px] overflow-hidden shadow-xl cursor-pointer group"
         onClick={() => setActiveTab(AppTab.EDUCATION)}
         style={{
           backgroundImage:
-            "linear-gradient(to right, rgba(6,95,70,0.9), rgba(8,145,178,0.9)), url('/biodiversidad-bg.svg')",
+            "linear-gradient(145deg, rgba(4,78,52,0.94), rgba(12,87,66,0.88) 52%, rgba(12,109,80,0.82)), url('/ecovigia-wetland-bg.png')",
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'bottom center',
         }}
       >
         <div className="absolute inset-0 flex flex-col justify-between p-5">
           <div className="flex justify-between items-start">
             <div className="max-w-[70%]">
-              <h2 className="text-white text-xl font-bold drop-shadow-sm">
+              <h2 className="text-white text-[36px] font-extrabold drop-shadow-sm leading-9">
                 {lang === 'en' ? 'Local biodiversity' : 'Biodiversidad Local'}
               </h2>
-              <p className="text-white/90 text-sm">
+              <p className="text-white/90 text-[15px] leading-6">
                 {lang === 'en'
                   ? 'Discover the birds, plants, amphibians and insects of the wetland.'
                   : 'Conoce las aves, plantas, anfibios e insectos del humedal.'}
               </p>
             </div>
-            <div className="flex flex-col items-center gap-1 text-emerald-50 drop-shadow-sm">
-              <Bird size={28} />
+            <div className="flex flex-col items-center gap-1 text-lime-200/95 drop-shadow-sm">
+              <Bird size={30} />
               <Leaf size={20} />
             </div>
           </div>
-          <p className="text-[11px] text-emerald-50">
+          <div className="space-y-2">
+            <div className="w-8 h-[3px] rounded-full bg-lime-300/80" />
+            <p className="text-[12px] text-emerald-50/95">
             {lang === 'en'
               ? 'Tap to explore educational cards about life in the wetland.'
               : 'Toca para explorar fichas educativas sobre la vida del humedal.'}
-          </p>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -433,31 +437,34 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       {/* Acción principal */}
       <button
         onClick={() => setActiveTab(AppTab.MONITORING)}
-        className="bg-emerald-600 text-white px-4 py-3 rounded-2xl flex items-center justify-center gap-3 shadow-sm active:scale-[0.99] transition-transform"
+        className="eco-card text-emerald-900 px-5 py-4 rounded-[24px] flex items-center justify-between gap-3 active:scale-[0.99] transition-transform"
       >
-        <Eye size={24} />
-        <div className="text-left">
-          <span className="font-semibold text-sm block">
-                        {lang === 'en'
+        <div className="w-11 h-11 rounded-full bg-emerald-700/90 text-white flex items-center justify-center shrink-0">
+          <Eye size={22} />
+        </div>
+        <div className="text-left flex-1">
+          <span className="font-bold text-lg block text-emerald-900 leading-6">
+            {lang === 'en'
               ? 'Make a report'
               : 'Realizar un reporte'}
-            </span>
-          <span className="text-[11px] text-emerald-100">
+          </span>
+          <span className="text-[12px] text-slate-600">
             {lang === 'en'
               ? 'Record sightings and risks in the wetland'
               : 'Registra avistamientos y riesgos en el humedal'}
           </span>
         </div>
+        <ChevronRight size={24} className="text-emerald-700" />
       </button>
 
       <section>
-        <h3 className="text-lg font-bold text-emerald-900 mb-3">
+        <h3 className="text-lg font-bold text-emerald-950 mb-3">
           {lang === 'en' ? 'Recent news' : 'Noticias Recientes'}
         </h3>
         {isAdmin && (
           <form
             onSubmit={handleSaveNews}
-            className="mb-4 bg-white border border-emerald-50 rounded-2xl p-3 shadow-sm space-y-2"
+            className="mb-4 eco-card rounded-2xl p-3 space-y-2"
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -601,7 +608,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
               published_at: null,
             },
           ]).map((item) => (
-            <div key={item.id} className="bg-white p-3 rounded-xl flex gap-3 border border-emerald-50">
+            <div key={item.id} className="eco-card-soft p-3 rounded-2xl flex gap-3">
               <div className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
                 {item.image_url ? (
                   <img src={item.image_url} alt="News" className="w-full h-full object-cover" />

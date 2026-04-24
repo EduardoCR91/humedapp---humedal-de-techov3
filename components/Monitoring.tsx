@@ -480,24 +480,24 @@ const Monitoring: React.FC = () => {
       </section>
 
       <div className="relative mb-6">
-        <div className="bg-gray-100 h-64 rounded-3xl relative overflow-hidden border border-emerald-50 shadow-inner z-0">
+        <div className="eco-card-soft h-64 rounded-3xl relative overflow-hidden z-0">
           <div ref={mapContainerRef} className="w-full h-full" />
           <button 
             onClick={handleLocate} 
-            className="absolute top-4 left-4 z-[400] bg-white p-2.5 rounded-xl shadow-lg text-emerald-600 active:scale-90 transition-all border border-emerald-50"
+            className="absolute top-4 left-4 z-[400] eco-card p-2.5 rounded-xl text-emerald-600 active:scale-90 transition-all"
           >
             <Navigation2 size={20} fill={vm.userCoords ? "currentColor" : "none"} />
           </button>
           <div className="absolute bottom-4 right-4 z-[400] flex flex-col gap-2">
             <button
               onClick={handleZoomIn}
-              className="bg-white p-2 rounded-xl shadow-md border border-emerald-50 text-emerald-700 active:scale-95"
+              className="eco-card p-2 rounded-xl text-emerald-700 active:scale-95"
             >
               <Plus size={16} />
             </button>
             <button
               onClick={handleZoomOut}
-              className="bg-white p-2 rounded-xl shadow-md border border-emerald-50 text-emerald-700 active:scale-95"
+              className="eco-card p-2 rounded-xl text-emerald-700 active:scale-95"
             >
               <Minus size={16} />
             </button>
@@ -506,7 +506,7 @@ const Monitoring: React.FC = () => {
 
         {showConfirmSelection && (
           <div className="absolute inset-0 z-[500] flex items-center justify-center p-4 bg-emerald-900/10 backdrop-blur-[2px] rounded-3xl overflow-hidden animate-fadeIn">
-            <div className="bg-white/95 backdrop-blur shadow-2xl rounded-2xl p-4 w-full max-w-[200px] border border-emerald-100 animate-slideUp">
+            <div className="eco-card rounded-2xl p-4 w-full max-w-[200px] animate-slideUp">
               <div className="flex flex-col items-center gap-3">
                 <div className="bg-emerald-100 p-2 rounded-full text-emerald-600">
                   <MapPin size={20} />
@@ -514,7 +514,7 @@ const Monitoring: React.FC = () => {
                 <p className="text-[10px] font-bold text-center text-emerald-900 uppercase tracking-tight">¿Reportar en este punto?</p>
                 <div className="flex gap-2 w-full">
                   <button onClick={confirmMapSelection} className="flex-1 bg-emerald-600 text-white p-2 rounded-lg shadow-md active:scale-90 transition-transform"><Check size={18} className="mx-auto" /></button>
-                  <button onClick={cancelMapSelection} className="flex-1 bg-white text-gray-400 p-2 rounded-lg border border-gray-100 active:scale-90 transition-transform"><X size={18} className="mx-auto" /></button>
+                  <button onClick={cancelMapSelection} className="flex-1 eco-card-soft text-gray-500 p-2 rounded-lg active:scale-90 transition-transform"><X size={18} className="mx-auto" /></button>
                 </div>
               </div>
             </div>
@@ -538,7 +538,7 @@ const Monitoring: React.FC = () => {
         </div>
 
         {showStats && (
-          <div className="bg-white p-6 rounded-3xl border border-emerald-50 shadow-sm flex flex-col items-center gap-6 animate-fadeIn">
+          <div className="eco-card p-6 rounded-3xl flex flex-col items-center gap-6 animate-fadeIn">
             <div className="relative w-40 h-40">
               <svg viewBox="0 0 20 20" className="w-full h-full transform -rotate-90">
                 {getSlices().map((slice, i) => (
@@ -578,7 +578,7 @@ const Monitoring: React.FC = () => {
               className={`px-4 py-2 rounded-full text-xs font-bold capitalize transition-all whitespace-nowrap ${
                 vm.activeFilter === f
                   ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-white text-emerald-600 border border-emerald-100'
+                  : 'bg-white/85 text-emerald-700 border border-white/80'
               }`}
             >
               {f === 'all'
@@ -606,14 +606,14 @@ const Monitoring: React.FC = () => {
             <button
               onClick={() => canPrev && setPage(p => p - 1)}
               disabled={!canPrev}
-              className="px-3 py-1 rounded-full text-[11px] border border-emerald-100 text-font-black disabled:text-font-black disabled:border-gray-200"
+              className="px-3 py-1 rounded-full text-[11px] border border-white/80 bg-white/85 text-font-black disabled:text-font-black disabled:border-gray-200"
             >{lang === 'en' ? 'Previous' : 'Anterior'}
               
             </button>
             <button
               onClick={() => canNext && setPage(p => p + 1)}
               disabled={!canNext}
-              className="px-3 py-1 rounded-full text-[11px] border border-emerald-100 text-font-black disabled:text-gray-300 disabled:border-gray-200"
+              className="px-3 py-1 rounded-full text-[11px] border border-white/80 bg-white/85 text-font-black disabled:text-gray-300 disabled:border-gray-200"
             >{lang === 'en' ? 'Next' : 'Siguiente'}
               
             </button>
@@ -647,7 +647,7 @@ const Monitoring: React.FC = () => {
           return (
             <div
               key={report.id}
-              className={`bg-white p-4 rounded-2xl border transition-all ${
+              className={`eco-card-soft p-4 rounded-2xl border transition-all ${
                 selectedReportId === report.id
                   ? 'border-emerald-500 shadow-md ring-1 ring-emerald-500/20'
                   : 'border-emerald-50 shadow-sm'
@@ -741,7 +741,7 @@ const Monitoring: React.FC = () => {
 
       {isReporting && (
         <div className="fixed inset-0 z-[2000] bg-black/40 backdrop-blur-sm flex items-end p-4">
-          <div className="bg-white w-full rounded-t-[2.5rem] rounded-b-3xl p-6 shadow-2xl animate-slideUp max-h-[90vh] overflow-y-auto no-scrollbar">
+          <div className="eco-card w-full rounded-t-[2.5rem] rounded-b-3xl p-6 animate-slideUp max-h-[90vh] overflow-y-auto no-scrollbar">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-emerald-900">Nuevo Reporte</h3>
               <button onClick={() => { setIsReporting(false); setCapturedImage(null); stopCamera(); }} className="p-2 text-gray-400"><X size={24}/></button>
@@ -800,7 +800,7 @@ const Monitoring: React.FC = () => {
                   <button 
                     key={type}
                     onClick={() => setNewReportDraft(prev => ({...prev, type}))}
-                    className={`p-3 rounded-xl border text-[10px] font-bold uppercase transition-all ${newReportDraft.type === type ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-400 border-gray-100'}`}
+                    className={`p-3 rounded-xl border text-[10px] font-bold uppercase transition-all ${newReportDraft.type === type ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white/85 text-gray-500 border-white/80'}`}
                   >
                     {type === 'emergency' ? 'Riesgo' : type}
                   </button>
@@ -821,7 +821,7 @@ const Monitoring: React.FC = () => {
 
       {showConfirmation && lastReportPreview && (
         <div className="fixed inset-0 z-[2100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-xs w-full p-4">
+          <div className="eco-card rounded-3xl max-w-xs w-full p-4">
             <div className="flex justify-between items-center mb-3">
               <h4 className="text-sm font-bold text-emerald-900">Reporte guardado</h4>
               <button
@@ -854,7 +854,7 @@ const Monitoring: React.FC = () => {
 
       {activeReportPreview && (
         <div className="fixed inset-0 z-[2200] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-4">
+          <div className="eco-card rounded-3xl max-w-sm w-full p-4">
             <div className="flex justify-between items-center mb-3">
               <h4 className="text-sm font-bold text-emerald-900">Detalle del reporte</h4>
               <button

@@ -166,15 +166,15 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-start justify-center px-3 pb-3 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-black/45 backdrop-blur-md flex items-start justify-center px-3 pb-3 overflow-y-auto"
       style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}
     >
-      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 relative max-h-[calc(100vh-env(safe-area-inset-top,0px)-1.5rem)] overflow-y-auto no-scrollbar">
-        <div className="sticky top-0 z-20 bg-white pb-2 mb-2 border-b border-gray-100">
+      <div className="w-full max-w-md rounded-3xl p-5 relative max-h-[calc(100vh-env(safe-area-inset-top,0px)-1.5rem)] overflow-y-auto no-scrollbar border border-emerald-100/70 bg-[rgba(238,242,240,0.95)] shadow-[0_18px_45px_rgba(16,24,20,0.28)] backdrop-blur-md">
+        <div className="sticky top-0 z-20 bg-[rgba(238,242,240,0.94)] backdrop-blur-md pb-2 mb-3 border-b border-emerald-100/70">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="text-xl font-bold text-emerald-900 mb-1">Tu perfil</h2>
-              <p className="text-xs text-gray-500">
+              <h2 className="text-xl font-extrabold text-emerald-950 mb-1">Tu perfil</h2>
+              <p className="text-xs text-slate-600">
                 Revisa tus datos de cuenta y ajusta tu nombre visible o nombre de usuario.
               </p>
             </div>
@@ -186,7 +186,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
                 <select
                   value={lang}
                   onChange={e => setLang(e.target.value === 'en' ? 'en' : 'es')}
-                  className="text-[11px] border border-gray-200 rounded-lg px-2 py-1 bg-white"
+                  className="text-[11px] border border-emerald-100 rounded-lg px-2 py-1 bg-white/75 text-slate-700"
                 >
                   <option value="es">Español</option>
                   <option value="en">English</option>
@@ -194,7 +194,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
               </div>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 mt-0.5"
+                className="text-slate-500 hover:text-slate-700 mt-0.5"
                 aria-label="Cerrar perfil"
               >
                 <X size={20} />
@@ -203,7 +203,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
           </div>
         </div>
 
-        <div className="mb-4 text-xs text-gray-600 bg-emerald-50/60 border border-emerald-100 rounded-2xl p-3">
+        <div className="mb-4 text-xs text-gray-700 rounded-2xl p-3 border border-emerald-100/70 bg-[rgba(237,244,241,0.9)]">
           <p className="font-semibold text-emerald-800 mb-1">
             {lang === 'en' ? 'Sign‑in data' : 'Datos de inicio de sesión'}
           </p>
@@ -225,7 +225,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
               required
               value={username}
               onChange={e => setUsername(e.target.value)}
-              className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full p-3 rounded-xl border border-emerald-100 bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               placeholder="Ej: humedal_guardian"
             />
             <p className="text-[10px] text-gray-400 mt-1">
@@ -249,7 +249,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-emerald-600 text-white rounded-xl text-sm font-semibold disabled:opacity-60"
+            className="w-full py-3 bg-emerald-700 text-white rounded-xl text-sm font-semibold disabled:opacity-60"
           >
             {loading
               ? lang === 'en'
@@ -262,7 +262,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
         </form>
 
         {isAdmin && (
-          <div className="mt-6 pt-4 border-t border-gray-100">
+          <div className="mt-6 pt-4 border-t border-emerald-100/80">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
                 <Shield size={14} />
@@ -288,7 +288,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
                   type="text"
                   value={userSearch}
                   onChange={e => setUserSearch(e.target.value)}
-                  className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-8 pr-3 py-2 rounded-xl border border-emerald-100 bg-white/70 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   placeholder={
                     lang === 'en'
                       ? 'E.g.: humedal_guardian or email'
@@ -299,7 +299,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
               <button
                 type="submit"
                 disabled={userSearchLoading || !userSearch.trim()}
-                className="px-3 py-2 bg-emerald-600 text-white rounded-xl text-xs font-semibold disabled:opacity-60"
+                className="px-3 py-2 bg-emerald-700 text-white rounded-xl text-xs font-semibold disabled:opacity-60"
               >
                 {userSearchLoading
                   ? lang === 'en'
@@ -327,7 +327,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
                 {managedUsers.map(u => (
                   <div
                     key={u.id}
-                    className="flex items-center justify-between gap-3 p-2.5 rounded-xl border border-gray-100 bg-gray-50"
+                    className="flex items-center justify-between gap-3 p-2.5 rounded-xl border border-emerald-100/70 bg-[rgba(255,255,255,0.68)]"
                   >
                     <div className="flex flex-col">
                       <span className="text-xs font-semibold text-gray-800">
@@ -348,7 +348,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
                       <select
                         value={u.role ?? 'user'}
                         onChange={e => handleChangeManagedRole(u.id, e.target.value)}
-                        className="text-[11px] border border-gray-200 rounded-lg px-2 py-1 bg-white"
+                        className="text-[11px] border border-emerald-100 rounded-lg px-2 py-1 bg-white/75"
                       >
                         <option value="user">
                           {lang === 'en' ? 'User' : 'Usuario'}
@@ -372,7 +372,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
           </div>
         )}
 
-        <div className="mt-6 pt-3 border-t border-gray-100 sticky bottom-0 bg-white">
+        <div className="mt-6 pt-3 border-t border-emerald-100 sticky bottom-0 bg-[rgba(238,242,240,0.96)] backdrop-blur-md">
           <button
             onClick={async () => {
               await signOut();
