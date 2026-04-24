@@ -372,15 +372,15 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
           </div>
         )}
 
-        <div className="mt-6 pt-3 border-t border-emerald-100 sticky bottom-0 bg-[rgba(238,242,240,0.96)] backdrop-blur-md">
+        <div className="mt-6 pt-3 border-t border-emerald-100/50 sticky bottom-0 bg-transparent">
           <button
             onClick={async () => {
               await signOut();
               onClose();
             }}
-            className="w-full py-2.5 bg-red-50 text-red-600 rounded-xl text-xs font-semibold border border-red-100"
+            className="w-full py-2.5 bg-red-50/80 hover:bg-red-100 text-red-600 rounded-xl text-xs font-semibold border border-red-100 transition-colors"
           >
-            Cerrar sesión
+            {lang === 'en' ? 'Sign out' : 'Cerrar sesión'}
           </button>
         </div>
       </div>
