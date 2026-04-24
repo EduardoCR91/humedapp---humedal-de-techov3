@@ -23,7 +23,7 @@ Elegí una arquitectura moderna y ágil para que la app fluya sin problemas tant
 
 ## ¿Cómo levantar el proyecto en tu máquina? 🚀
 
-Si quieres cacharrear con el código, los pasos son súper sencillos:
+Para realizar ajustes o cambios a tu medida, los pasos son súper sencillos:
 
 1. Instala las dependencias del proyecto:
    ```bash
@@ -43,4 +43,5 @@ npx cap open android
 ```
 
 ---
-*Desarrollado con mucha dedicación para aportar nuestro granito de arena al cuidado de nuestros humedales.* 🦆🍃
+*Desarrollado con mucha dedicación para aportar nuestro granito de arena al cuidado de nuestros humedales.*
+*Desarrolladores Carlos Eduardo Cruz - Juan Esteban Leon.* 🦆🍃
