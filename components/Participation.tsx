@@ -38,7 +38,7 @@ const Participation: React.FC = () => {
         <h2 className="text-2xl font-bold text-black">
           {lang === 'en' ? 'Community' : 'Comunidad'}
         </h2>
-        <button onClick={() => vm.setView('profile')} className="flex items-center gap-2 eco-card p-1.5 pr-3 rounded-full">
+        <button onClick={() => vm.setView('profile')} className="flex items-center gap-2 eco-forest-card p-1.5 pr-3 rounded-full">
           <img src={vm.profile.avatar} className="w-8 h-8 rounded-full" alt="profile"/>
           <span className="text-xs font-bold">{vm.profile.name}</span>
         </button>
@@ -62,8 +62,8 @@ const Participation: React.FC = () => {
             onClick={() => vm.setSortMode('latest')}
             className={`flex-1 py-1.5 rounded-full text-[11px] font-semibold ${
               vm.sortMode === 'latest'
-                ? 'bg-emerald-600 text-white'
-                : 'bg-gray-100 text-gray-600'
+                ? 'eco-forest-btn text-white'
+                : 'eco-forest-btn text-emerald-50/85'
             }`}
           >
             {lang === 'en' ? 'Latest' : 'Últimos'}
@@ -72,20 +72,20 @@ const Participation: React.FC = () => {
             onClick={() => vm.setSortMode('top')}
             className={`flex-1 py-1.5 rounded-full text-[11px] font-semibold ${
               vm.sortMode === 'top'
-                ? 'bg-emerald-600 text-white'
-                : 'bg-gray-100 text-gray-600'
+                ? 'eco-forest-btn text-white'
+                : 'eco-forest-btn text-emerald-50/85'
             }`}
           >
             {lang === 'en' ? 'Top' : 'Destacados'}
           </button>
         </div>
 
-        <div className="eco-card p-3 rounded-2xl mb-4">
+        <div className="eco-forest-card p-3 rounded-2xl mb-4">
           <textarea
             value={newQuestion}
             onChange={e => setNewQuestion(e.target.value)}
             rows={3}
-            className="w-full text-sm text-gray-700 border-none outline-none resize-none"
+            className="w-full text-sm text-emerald-50 placeholder:text-emerald-100/80 border-none outline-none resize-none bg-transparent"
             placeholder={lang==='en'? "Write your question or contribution about the Techo Wetland here..." : "Escribe tu consulta o contribución sobre el Humedal"} 
           />
           <div className="flex justify-end mt-2">
@@ -99,7 +99,7 @@ const Participation: React.FC = () => {
                     setEditingPostId(null);
                     setNewQuestion('');
                   }}
-                  className="px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-600 text-white disabled:opacity-50 mr-2"
+                  className="px-4 py-1.5 rounded-full text-xs font-semibold eco-forest-btn disabled:opacity-50 mr-2"
                 >
                   Guardar cambios
                 </button>
@@ -108,7 +108,7 @@ const Participation: React.FC = () => {
                     setEditingPostId(null);
                     setNewQuestion('');
                   }}
-                  className="px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600"
+                  className="px-3 py-1.5 rounded-full text-xs font-semibold eco-forest-btn text-emerald-50/90"
                 >
                   Cancelar
                 </button>
@@ -122,7 +122,7 @@ const Participation: React.FC = () => {
                   vm.addPost(displayName, newQuestion.trim());
                   setNewQuestion('');
                 }}
-                className="px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-600 text-white disabled:opacity-50"
+                className="px-4 py-1.5 rounded-full text-xs font-semibold eco-forest-btn disabled:opacity-50"
               >
                 {lang === 'en' ? 'Post question' : 'Publicar consulta'}
               </button>
@@ -207,17 +207,17 @@ const Participation: React.FC = () => {
             <button
               onClick={() => setCommentsPage(p => Math.max(0, p - 1))}
               disabled={commentsPage === 0}
-              className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/80 border border-white disabled:opacity-40"
+              className="px-3 py-1.5 rounded-full text-[11px] font-semibold eco-forest-btn disabled:opacity-40"
             >
               {lang === 'en' ? 'Previous' : 'Anterior'}
             </button>
-            <span className="text-[11px] text-gray-600">
+            <span className="text-[11px] text-emerald-50 font-semibold">
               {commentsPage + 1} / {totalPages}
             </span>
             <button
               onClick={() => setCommentsPage(p => Math.min(totalPages - 1, p + 1))}
               disabled={commentsPage >= totalPages - 1}
-              className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/80 border border-white disabled:opacity-40 flex items-center gap-1"
+              className="px-3 py-1.5 rounded-full text-[11px] font-semibold eco-forest-btn disabled:opacity-40 flex items-center gap-1"
             >
               {lang === 'en' ? 'Next' : 'Siguiente'}
               <ChevronRight size={12} />

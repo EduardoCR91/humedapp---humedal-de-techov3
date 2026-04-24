@@ -249,7 +249,7 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-emerald-700 text-white rounded-xl text-sm font-semibold disabled:opacity-60"
+            className="w-full py-3 eco-forest-btn rounded-xl text-sm font-semibold disabled:opacity-60"
           >
             {loading
               ? lang === 'en'

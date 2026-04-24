@@ -313,7 +313,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   return (
     <div className="flex flex-col gap-5 p-4 animate-fadeIn text-black">
       <header className="flex flex-col gap-1">
-        <h1 className="text-5xl leading-[0.95] font-black text-emerald-950 tracking-tight">EcoVigia!</h1>
+        <h1 className="text-2xl leading-[0.95] font-black text-emerald-950 tracking-tight">EcoVigia!</h1>
         <p className="text-slate-600 text-base">
           {lang === 'en'
             ? 'Explore and protect the Techo Wetland'
@@ -325,7 +325,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       <section className="eco-card p-4 rounded-[24px] flex justify-between items-center">
         <div className="flex flex-col items-center gap-1">
           <Sun className="text-amber-400" size={28} />
-          <span className="text-[32px] font-extrabold text-slate-800">18°C</span>
+          <span className="text-[22px] font-extrabold text-slate-800">18°C</span>
           <span className="text-[12px] text-slate-500 font-medium">
             {lang === 'en' ? 'Sunny' : 'Soleado'}
           </span>
@@ -333,7 +333,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         <div className="h-14 w-[1px] bg-slate-200" />
         <div className="flex flex-col items-center gap-1">
           <Droplets className="text-emerald-500" size={28} />
-          <span className="text-[32px] font-extrabold text-slate-800">65%</span>
+          <span className="text-[22px] font-extrabold text-slate-800">65%</span>
           <span className="text-[12px] text-slate-500 font-medium">
             {lang === 'en' ? 'Humidity' : 'Humedad'}
           </span>
@@ -341,7 +341,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         <div className="h-14 w-[1px] bg-slate-200" />
         <div className="flex flex-col items-center gap-1">
           <Wind className="text-emerald-500" size={28} />
-          <span className="text-[32px] font-extrabold text-slate-800">12 km/h</span>
+          <span className="text-[22px] font-extrabold text-slate-800">12 km/h</span>
           <span className="text-[12px] text-slate-500 font-medium">
             {lang === 'en' ? 'Air quality' : 'Calidad Aire'}
           </span>
@@ -362,7 +362,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         <div className="absolute inset-0 flex flex-col justify-between p-5">
           <div className="flex justify-between items-start">
             <div className="max-w-[70%]">
-              <h2 className="text-white text-[36px] font-extrabold drop-shadow-sm leading-9">
+              <h2 className="text-white text-[26px] font-extrabold drop-shadow-sm leading-9">
                 {lang === 'en' ? 'Local biodiversity' : 'Biodiversidad Local'}
               </h2>
               <p className="text-white/90 text-[15px] leading-6">

@@ -52,8 +52,6 @@ const Education: React.FC = () => {
     id: TopicId;
     title: string;
     icon: React.ComponentType<any>;
-    accent: string;
-    card: string;
     summary: string;
   }[] =
     [
@@ -61,32 +59,24 @@ const Education: React.FC = () => {
         id: 'aves',
         title: 'Aves',
         icon: Bird,
-        accent: 'text-sky-600',
-        card: 'bg-[linear-gradient(145deg,rgba(227,242,255,0.86),rgba(255,255,255,0.82))]',
         summary: 'Más de 30 especies visitan y habitan el humedal.',
       },
       {
         id: 'plantas',
         title: 'Plantas',
         icon: Sprout,
-        accent: 'text-emerald-600',
-        card: 'bg-[linear-gradient(145deg,rgba(222,246,233,0.88),rgba(255,255,255,0.82))]',
         summary: 'Plantas acuáticas y árboles nativos que mantienen vivo el humedal.',
       },
       {
         id: 'anfibios',
         title: 'Anfibios',
         icon: Droplets,
-        accent: 'text-amber-600',
-        card: 'bg-[linear-gradient(145deg,rgba(255,243,216,0.9),rgba(255,255,255,0.82))]',
         summary: 'Indicadores de salud ambiental como la rana sabanera.',
       },
       {
         id: 'insectos',
         title: 'Insectos',
         icon: Bug,
-        accent: 'text-violet-600',
-        card: 'bg-[linear-gradient(145deg,rgba(240,232,255,0.9),rgba(255,255,255,0.82))]',
         summary: 'Polinizadores, mariposas y escarabajos que sostienen la cadena alimenticia.',
       },
     ];
@@ -264,7 +254,7 @@ const Education: React.FC = () => {
       )}
 
       {isSupported && (
-        <div className="mb-4 text-[11px] text-gray-600 bg-emerald-50/60 border border-emerald-100 rounded-2xl px-3 py-2 flex items-center justify-between gap-3">
+        <div className="mb-4 text-[11px] eco-forest-card rounded-2xl px-3 py-2 flex items-center justify-between gap-3">
           <span>
             Recibe recordatorios de eventos ambientales en tu dispositivo.
           </span>
@@ -279,7 +269,7 @@ const Education: React.FC = () => {
                 });
               }
             }}
-            className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-semibold disabled:opacity-60"
+            className="px-3 py-1 rounded-full eco-forest-btn text-[10px] font-semibold disabled:opacity-60"
             disabled={permission === 'granted'}
           >
             {permission === 'granted' ? 'Notificaciones activas' : 'Activar'}
@@ -294,9 +284,9 @@ const Education: React.FC = () => {
           <button
             key={cat.id}
             onClick={() => setSelectedTopic(cat.id)}
-            className={`p-4 rounded-2xl border border-white/75 shadow-[0_8px_22px_rgba(13,30,20,0.14)] backdrop-blur-sm flex flex-col items-center active:scale-[0.98] transition-transform ${cat.card}`}
+            className="p-4 rounded-2xl eco-forest-card flex flex-col items-center active:scale-[0.98] transition-transform"
           >
-            <div className={`w-11 h-11 rounded-2xl mb-2 flex items-center justify-center bg-white/70 ${cat.accent}`}>
+            <div className="w-11 h-11 rounded-2xl mb-2 flex items-center justify-center bg-white/18 text-emerald-50">
               <TopicIcon size={22} strokeWidth={2.2} />
             </div>
             <span className="font-bold text-gray-800 text-sm">{cat.title}</span>
@@ -319,7 +309,7 @@ const Education: React.FC = () => {
         {isAdmin && (
           <form
             onSubmit={handleCreateEvent}
-            className="mb-6 eco-card rounded-3xl p-4 space-y-3"
+            className="mb-6 eco-forest-card rounded-3xl p-4 space-y-3"
           >
             <div className="flex items-center gap-2 mb-1">
               <PlusCircle size={18} className="text-emerald-600" />
@@ -375,7 +365,7 @@ const Education: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full p-2.5 rounded-xl border border-dashed border-emerald-200 text-xs text-emerald-700 flex items-center justify-center gap-2 bg-emerald-50/40"
+                  className="w-full p-2.5 rounded-xl border border-emerald-100/40 text-xs text-emerald-50 flex items-center justify-center gap-2 eco-forest-btn"
                 >
                   <ImageIcon size={16} />
                   {imagePreview ? 'Cambiar imagen' : 'Subir imagen'}
@@ -401,7 +391,7 @@ const Education: React.FC = () => {
             <button
               type="submit"
               disabled={savingEvent}
-              className="w-full mt-2 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-semibold disabled:opacity-60"
+              className="w-full mt-2 py-2.5 eco-forest-btn rounded-xl text-xs font-semibold disabled:opacity-60"
             >
               {savingEvent
                 ? 'Guardando...'
@@ -415,7 +405,7 @@ const Education: React.FC = () => {
         {loadingEvents ? (
           <p className="text-xs text-gray-500">Cargando eventos...</p>
         ) : upcomingEvents.length === 0 && pastEvents.length === 0 ? (
-          <div className="flex flex-col items-center justify-center eco-card rounded-3xl p-6 text-center text-gray-500">
+          <div className="flex flex-col items-center justify-center eco-forest-card rounded-3xl p-6 text-center text-emerald-50">
             <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-3 relative">
               <Bird size={28} className="text-emerald-500" />
               <span className="absolute -right-1 -top-1 bg-white border border-emerald-200 rounded-full w-5 h-5 flex items-center justify-center text-[10px] text-emerald-600 font-bold">
@@ -436,7 +426,7 @@ const Education: React.FC = () => {
                   {upcomingEvents.map(ev => (
                     <div
                       key={ev.id}
-                      className="eco-card-soft rounded-3xl p-4 flex gap-3"
+                      className="eco-forest-card rounded-3xl p-4 flex gap-3"
                     >
                       <div className="w-20 h-20 rounded-2xl overflow-hidden bg-emerald-50 flex items-center justify-center shrink-0">
                         {ev.imageUrl ? (

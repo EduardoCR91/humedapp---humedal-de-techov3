@@ -54,7 +54,7 @@ const AppContent: React.FC = () => {
           >
             <div className="w-full flex items-center justify-between gap-3">
               <div className="bg-white/85 px-3 py-1.5 rounded-full shadow-md border border-white/80 flex items-center gap-2 min-w-0 backdrop-blur-md">
-                <span className="text-sm font-extrabold text-emerald-900 tracking-tight">
+                <span className="text-1xl font-extrabold text-emerald-900 tracking-tight">
                   EcoVigia!
                 </span>
                 <span className="w-px h-5 bg-emerald-200" />
@@ -114,6 +114,48 @@ const AppContent: React.FC = () => {
           border: 1px solid rgba(255, 255, 255, 0.72);
           backdrop-filter: blur(5px);
           box-shadow: 0 6px 20px rgba(15, 35, 26, 0.1);
+        }
+        .eco-forest-card {
+          background: linear-gradient(145deg, rgba(4,78,52,0.94), rgba(12,87,66,0.88) 52%, rgba(12,109,80,0.82));
+          border: 1px solid rgba(220, 252, 231, 0.25);
+          box-shadow: 0 12px 28px rgba(5, 46, 35, 0.36);
+          color: #ecfdf5;
+        }
+        .eco-forest-soft-card {
+          background: linear-gradient(145deg, rgba(4,78,52,0.78), rgba(12,87,66,0.72) 52%, rgba(12,109,80,0.66));
+          border: 1px solid rgba(220, 252, 231, 0.2);
+          box-shadow: 0 10px 24px rgba(5, 46, 35, 0.28);
+          color: #ecfdf5;
+        }
+        .eco-forest-btn {
+          background: linear-gradient(145deg, rgba(4,78,52,0.94), rgba(12,87,66,0.88) 52%, rgba(12,109,80,0.82));
+          border: 1px solid rgba(220, 252, 231, 0.28);
+          color: #f0fdf4;
+          box-shadow: 0 10px 24px rgba(5, 46, 35, 0.35);
+        }
+        .eco-forest-soft-card .text-black,
+        .eco-forest-soft-card .text-gray-800,
+        .eco-forest-soft-card .text-gray-700,
+        .eco-forest-soft-card .text-gray-600,
+        .eco-forest-soft-card .text-gray-500,
+        .eco-forest-soft-card .text-gray-400,
+        .eco-forest-soft-card .text-emerald-900,
+        .eco-forest-soft-card .text-emerald-800,
+        .eco-forest-soft-card .text-emerald-700,
+        .eco-forest-soft-card .text-emerald-600 {
+          color: #d1fae5 !important;
+        }
+        .eco-forest-card .text-black,
+        .eco-forest-card .text-gray-800,
+        .eco-forest-card .text-gray-700,
+        .eco-forest-card .text-gray-600,
+        .eco-forest-card .text-gray-500,
+        .eco-forest-card .text-gray-400,
+        .eco-forest-card .text-emerald-900,
+        .eco-forest-card .text-emerald-800,
+        .eco-forest-card .text-emerald-700,
+        .eco-forest-card .text-emerald-600 {
+          color: #d1fae5 !important;
         }
       `}</style>
     </div>
