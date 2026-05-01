@@ -466,9 +466,16 @@ const Monitoring: React.FC = () => {
         <div className="relative z-10 flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <CloudSun size={20} className="text-emerald-100" />
-            <span className="text-xs font-bold uppercase tracking-widest">
-              {lang === 'en' ? 'Techo Wetland' : 'Humedal de Techo'}
-            </span>
+            <div className="flex flex-col leading-tight">
+              <span className="text-xs font-bold uppercase tracking-widest">
+                {lang === 'en' ? 'Techo Wetland' : 'Humedal de Techo'}
+              </span>
+              <span className="text-[10px] text-emerald-100/90">
+                {lang === 'en'
+                  ? 'Estimated environmental data of the wetland'
+                  : 'Datos ambientales estimados del humedal'}
+              </span>
+            </div>
             <button onClick={vm.fetchWeather} className={`ml-auto ${vm.loadingWeather ? 'animate-spin' : ''}`}><RefreshCw size={14}/></button>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">

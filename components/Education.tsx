@@ -323,13 +323,15 @@ const Education: React.FC = () => {
               value={title}
               onChange={e => setTitle(e.target.value)}
               className="w-full p-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              style={{ color: '#000000' }}
               required
             />
             <textarea
               placeholder="Descripción del evento"
               value={description}
               onChange={e => setDescription(e.target.value)}
-              className="w-full p-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+              className="w-full p-2.5 rounded-xl border border-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+              style={{ color: '#000000' }}
               rows={3}
               required
             />
@@ -343,6 +345,7 @@ const Education: React.FC = () => {
                   value={eventDate}
                   onChange={e => setEventDate(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  style={{ color: '#000000' }}
                   required
                 />
               </div>
@@ -355,6 +358,7 @@ const Education: React.FC = () => {
                   value={eventTime}
                   onChange={e => setEventTime(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  style={{ color: '#000000' }}
                   required
                 />
               </div>

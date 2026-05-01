@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { AppTab } from '../types';
 import {
+  CloudSun,
   Sun,
   Wind,
   Droplets,
@@ -322,7 +323,21 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       </header>
 
       {/* Weather & Env Stats (Mocked) */}
-      <section className="eco-card p-4 rounded-[24px] flex justify-between items-center">
+      <section className="eco-card p-4 rounded-[24px]">
+        <div className="flex items-center gap-2 mb-3">
+          <CloudSun size={18} className="text-emerald-700" />
+          <div className="leading-tight">
+            <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-800">
+              {lang === 'en' ? 'Techo Wetland' : 'Humedal de Techo'}
+            </p>
+            <p className="text-[10px] text-slate-500">
+              {lang === 'en'
+                ? 'Estimated environmental data of the wetland'
+                : 'Datos ambientales estimados del humedal'}
+            </p>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
         <div className="flex flex-col items-center gap-1">
           <Sun className="text-amber-400" size={28} />
           <span className="text-[22px] font-extrabold text-slate-800">18°C</span>
@@ -345,6 +360,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
           <span className="text-[12px] text-slate-500 font-medium">
             {lang === 'en' ? 'Air quality' : 'Calidad Aire'}
           </span>
+        </div>
         </div>
       </section>
 

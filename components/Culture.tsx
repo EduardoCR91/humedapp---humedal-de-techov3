@@ -132,6 +132,16 @@ const Culture: React.FC = () => {
                   <p className="text-xs text-gray-500 mt-1 line-clamp-2">
                     {event.description}
                   </p>
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-[10px] text-emerald-700 font-semibold">
+                      {lang === 'en' ? 'Tap to expand' : 'Toca para ampliar'}
+                    </span>
+                    <span className="flex items-center gap-1 text-emerald-600">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/85" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/70" />
+                    </span>
+                  </div>
                 </div>
               </button>
             );
