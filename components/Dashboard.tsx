@@ -6,7 +6,7 @@ import {
   Sun,
   Wind,
   Droplets,
-  Eye,
+  AlertTriangle,
   Bird,
   Leaf,
   ChevronRight,
@@ -322,6 +322,32 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         </p>
       </header>
 
+      {/* Acción principal destacada */}
+      <button
+        onClick={() => setActiveTab(AppTab.MONITORING)}
+        className="relative overflow-hidden px-5 py-4 rounded-[24px] flex items-center justify-between gap-3 active:scale-[0.99] transition-transform shadow-[0_12px_28px_rgba(146,64,14,0.35)] border border-amber-100/60"
+        style={{
+          background:
+            'linear-gradient(145deg, rgba(180,83,9,0.95), rgba(217,119,6,0.9) 52%, rgba(245,158,11,0.82))',
+        }}
+      >
+        <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/20 blur-xl" />
+        <div className="w-11 h-11 rounded-full bg-white/18 text-white flex items-center justify-center shrink-0 border border-white/30">
+          <AlertTriangle size={22} />
+        </div>
+        <div className="text-left flex-1 relative z-10">
+          <span className="font-extrabold text-lg block text-white leading-6">
+            {lang === 'en' ? 'Report' : 'Reportar'}
+          </span>
+          <span className="text-[12px] text-amber-50/95">
+            {lang === 'en'
+              ? 'Report sightings or risks now'
+              : 'Reporta avistamientos o riesgos ahora'}
+          </span>
+        </div>
+        <ChevronRight size={24} className="text-white relative z-10" />
+      </button>
+
       {/* Weather & Env Stats (Mocked) */}
       <section className="eco-card p-4 rounded-[24px]">
         <div className="flex items-center gap-2 mb-3">
@@ -449,29 +475,6 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
           </div>
         </div>
       )}
-
-      {/* Acción principal */}
-      <button
-        onClick={() => setActiveTab(AppTab.MONITORING)}
-        className="eco-card text-emerald-900 px-5 py-4 rounded-[24px] flex items-center justify-between gap-3 active:scale-[0.99] transition-transform"
-      >
-        <div className="w-11 h-11 rounded-full bg-emerald-700/90 text-white flex items-center justify-center shrink-0">
-          <Eye size={22} />
-        </div>
-        <div className="text-left flex-1">
-          <span className="font-bold text-lg block text-emerald-900 leading-6">
-            {lang === 'en'
-              ? 'Make a report'
-              : 'Realizar un reporte'}
-          </span>
-          <span className="text-[12px] text-slate-600">
-            {lang === 'en'
-              ? 'Record sightings and risks in the wetland'
-              : 'Registra avistamientos y riesgos en el humedal'}
-          </span>
-        </div>
-        <ChevronRight size={24} className="text-emerald-700" />
-      </button>
 
       <section>
         <h3 className="text-lg font-bold text-emerald-950 mb-3">

@@ -107,25 +107,34 @@ export const useParticipationViewModel = () => {
     });
   }, [authUser]);
 
-  // Cargar desde localStorage los posts que el usuario ya ha marcado con like
+  // Cargar likes persistentes por usuario desde Supabase.
   useEffect(() => {
-    if (!authUser) {
-      setLikedPostIds([]);
-      return;
-    }
-    try {
-      const raw = window.localStorage.getItem(
-        `ecovigia_community_likes_${authUser.id}`
-      );
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          setLikedPostIds(parsed);
-        }
+    const loadLikedPostIds = async () => {
+      if (!authUser) {
+        setLikedPostIds([]);
+        return;
       }
-    } catch {
-      // ignorar errores de lectura
-    }
+
+      const { data, error } = await supabase
+        .from('community_query_likes')
+        .select('query_id')
+        .eq('user_id', authUser.id);
+
+      if (!error && data) {
+        const ids = data
+          .map((row: any) => row.query_id as string | null)
+          .filter((id): id is string => !!id);
+        setLikedPostIds(ids);
+      } else if (error) {
+        console.error('Error cargando likes del usuario en comunidad:', error.message);
+        setLikedPostIds([]);
+      }
+    };
+
+    loadLikedPostIds().catch(err => {
+      console.error('Error inesperado cargando likes del usuario en comunidad:', err);
+      setLikedPostIds([]);
+    });
   }, [authUser]);
 
   const updateProfile = (data: Partial<UserProfile>) => {
@@ -167,7 +176,17 @@ export const useParticipationViewModel = () => {
             ownerId: (row.user_id as string | null) ?? null,
           };
         });
-        setPosts(mapped);
+        if (authUser) {
+          const likedSet = new Set(likedPostIds);
+          setPosts(
+            mapped.map(post => ({
+              ...post,
+              hasLiked: likedSet.has(post.id),
+            }))
+          );
+        } else {
+          setPosts(mapped);
+        }
       } else if (error) {
         console.error('Error cargando consultas de comunidad desde Supabase:', error.message);
       }
@@ -176,7 +195,7 @@ export const useParticipationViewModel = () => {
     loadPosts().catch(err => {
       console.error('Error inesperado cargando consultas de comunidad:', err);
     });
-  }, []);
+  }, [authUser, likedPostIds]);
 
   const displayedPosts = useMemo(() => {
     const sorted = [...posts].sort((a, b) => {
@@ -188,16 +207,15 @@ export const useParticipationViewModel = () => {
     return sorted.slice(0, 15);
   }, [posts, sortMode]);
 
-  // Sincroniza la marca de "hasLiked" con lo que tengamos guardado en localStorage.
-  // Se ejecuta cuando cambian los likes guardados o cuando ya hay posts cargados.
+  // Sincroniza la marca hasLiked contra los ids persistidos en BD.
   useEffect(() => {
-    if (!authUser) return;
-    if (!posts.length || !likedPostIds.length) return;
+    if (!authUser || !posts.length) return;
 
     setPosts(prev => {
       let changed = false;
+      const likedSet = new Set(likedPostIds);
       const updated = prev.map(p => {
-        const shouldBeLiked = likedPostIds.includes(p.id);
+        const shouldBeLiked = likedSet.has(p.id);
         if (p.hasLiked !== shouldBeLiked) {
           changed = true;
           return { ...p, hasLiked: shouldBeLiked };
@@ -208,56 +226,70 @@ export const useParticipationViewModel = () => {
     });
   }, [authUser, likedPostIds, posts.length]);
 
-  const toggleLike = (id: string) => {
+  const toggleLike = async (id: string) => {
     if (!authUser) return;
 
-    // Fotografía del estado actual para calcular cambios
     const current = posts.find(p => p.id === id);
     if (!current) return;
 
     const nextHasLiked = !current.hasLiked;
     const delta = nextHasLiked ? 1 : -1;
-    const nextLikes = current.likes + delta;
+    const nextLikes = Math.max(0, current.likes + delta);
 
-    // Actualizar lista de posts en memoria
     setPosts(prev =>
       prev.map(p =>
         p.id === id ? { ...p, hasLiked: nextHasLiked, likes: nextLikes } : p
       )
     );
 
-    // Sincronizar contador de likes en Supabase
-    supabase
+    if (nextHasLiked) {
+      const { error: insertLikeError } = await supabase
+        .from('community_query_likes')
+        .insert({ query_id: id, user_id: authUser.id });
+
+      // Si ya existe el like por restricción UNIQUE, tratamos como estado final válido.
+      if (insertLikeError && insertLikeError.code !== '23505') {
+        console.error('Error insertando like de comunidad:', insertLikeError.message);
+        setPosts(prev =>
+          prev.map(p => (p.id === id ? { ...p, hasLiked: current.hasLiked, likes: current.likes } : p))
+        );
+        return;
+      }
+    } else {
+      const { error: deleteLikeError } = await supabase
+        .from('community_query_likes')
+        .delete()
+        .eq('query_id', id)
+        .eq('user_id', authUser.id);
+
+      if (deleteLikeError) {
+        console.error('Error quitando like de comunidad:', deleteLikeError.message);
+        setPosts(prev =>
+          prev.map(p => (p.id === id ? { ...p, hasLiked: current.hasLiked, likes: current.likes } : p))
+        );
+        return;
+      }
+    }
+
+    const { error: updateCountError } = await supabase
       .from('community_queries')
       .update({ likes_count: nextLikes })
-      .eq('id', id)
-      .then(({ error }) => {
-        if (error) {
-          console.error('Error actualizando likes de comunidad:', error.message);
-        }
-      })
-      .catch(err => {
-        console.error('Error inesperado actualizando likes de comunidad:', err);
-      });
+      .eq('id', id);
 
-    // Actualizar memoria local de likes por usuario (para no permitir múltiples likes)
+    if (updateCountError) {
+      console.error('Error actualizando likes_count de comunidad:', updateCountError.message);
+      // Revertimos estado local ante falla de persistencia.
+      setPosts(prev =>
+        prev.map(p => (p.id === id ? { ...p, hasLiked: current.hasLiked, likes: current.likes } : p))
+      );
+      return;
+    }
+
     setLikedPostIds(prevIds => {
       const set = new Set(prevIds);
-      if (nextHasLiked) {
-        set.add(id);
-      } else {
-        set.delete(id);
-      }
-      const arr = Array.from(set);
-      try {
-        window.localStorage.setItem(
-          `ecovigia_community_likes_${authUser.id}`,
-          JSON.stringify(arr)
-        );
-      } catch {
-        // ignorar errores de almacenamiento
-      }
-      return arr;
+      if (nextHasLiked) set.add(id);
+      else set.delete(id);
+      return Array.from(set);
     });
 
     // Si el post es del usuario actual, ajustar estadísticas del perfil en memoria
