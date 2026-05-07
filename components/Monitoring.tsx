@@ -584,8 +584,14 @@ const Monitoring: React.FC = () => {
               onClick={() => vm.setActiveFilter(f)}
               className={`px-4 py-2 rounded-full text-xs font-bold capitalize transition-all whitespace-nowrap ${
                 vm.activeFilter === f
-                  ? 'eco-forest-btn text-white shadow-md'
-                  : 'eco-forest-btn text-emerald-50/90 border border-emerald-100/30'
+                  ? f === 'fauna'
+                    ? 'bg-blue-600 text-white border border-blue-500 shadow-md'
+                    : f === 'flora'
+                    ? 'bg-emerald-600 text-white border border-emerald-500 shadow-md'
+                    : f === 'riesgo'
+                    ? 'bg-red-600 text-white border border-red-500 shadow-md'
+                    : 'eco-forest-btn text-white shadow-md'
+                  : 'eco-card text-emerald-800 border border-white/70'
               }`}
             >
               {f === 'all'
@@ -807,7 +813,15 @@ const Monitoring: React.FC = () => {
                   <button 
                     key={type}
                     onClick={() => setNewReportDraft(prev => ({...prev, type}))}
-                    className={`p-3 rounded-xl border text-[10px] font-bold uppercase transition-all ${newReportDraft.type === type ? 'eco-forest-btn text-white border-emerald-600' : 'eco-forest-btn text-emerald-50/90 border-emerald-100/30'}`}
+                    className={`p-3 rounded-xl border text-[10px] font-bold uppercase transition-all ${
+                      newReportDraft.type === type
+                        ? type === 'fauna'
+                          ? 'bg-blue-600 text-white border-blue-500 shadow-md'
+                          : type === 'flora'
+                          ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
+                          : 'bg-red-600 text-white border-red-500 shadow-md'
+                        : 'eco-card text-gray-600 border-white/70'
+                    }`}
                   >
                     {type === 'emergency' ? 'Riesgo' : type}
                   </button>

@@ -39,9 +39,12 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#dbe7df] safe-area-bottom pb-24">
+    <div
+      className="h-[100dvh] safe-area-bottom overflow-hidden bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url('/ecovigia-wetland-bg.png')` }}
+    >
       <main
-        className="max-w-md mx-auto min-h-screen relative overflow-x-hidden shadow-2xl border border-emerald-900/20 bg-cover bg-center"
+        className="max-w-md mx-auto h-[100dvh] relative overflow-x-hidden overflow-y-auto overscroll-none shadow-2xl border border-emerald-900/20 bg-cover bg-center"
         style={{
           backgroundImage: `url('/ecovigia-wetland-bg.png')`,
         }}
@@ -76,7 +79,10 @@ const AppContent: React.FC = () => {
             </div>
           </div>
         )}
-        <div className="relative z-10">
+        <div
+          className="relative z-10"
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 112px)' }}
+        >
           {loading ? (
             <div className="p-6 text-center text-gray-500 text-sm">Cargando sesión...</div>
           ) : (

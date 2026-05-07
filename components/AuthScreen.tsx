@@ -51,8 +51,8 @@ const AuthScreen: React.FC = () => {
           else if (lower.includes('rate limit')) {
             friendly =
               lang === 'en'
-                ? 'There have been too many registration attempts. Please wait a few minutes before trying again.'
-                : 'Se han realizado demasiados intentos de registro. Espera unos minutos antes de intentarlo de nuevo.';
+                ? 'Supabase temporarily blocked new sign-ups due to too many attempts from this source. Wait a few minutes and try again.'
+                : 'Supabase bloqueó temporalmente los registros por demasiados intentos desde esta red/dispositivo. Espera unos minutos e inténtalo de nuevo.';
           }
           // Caso 3: problemas con el nombre de usuario (por ejemplo, ya está en uso) a partir de errores de Supabase
           else if (

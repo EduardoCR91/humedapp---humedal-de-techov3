@@ -155,11 +155,31 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
     setUserRoleMessage(null);
     setUserSearchError(null);
 
-    const { error } = await supabase.from('profiles').update({ role: target.role }).eq('id', id);
+    if (!isAdmin) {
+      setUserSearchError('Tu cuenta no tiene permisos de administrador para cambiar roles.');
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ role: target.role })
+      .eq('id', id)
+      .select('id, role')
+      .single();
 
     if (error) {
-      setUserSearchError('No se pudo actualizar el rol del usuario.');
+      const low = error.message.toLowerCase();
+      if (low.includes('row-level security') || error.code === '42501') {
+        setUserSearchError(
+          'No se pudo actualizar el rol por políticas de seguridad (RLS) en Supabase.'
+        );
+      } else {
+        setUserSearchError(`No se pudo actualizar el rol del usuario: ${error.message}`);
+      }
     } else {
+      setManagedUsers(prev =>
+        prev.map(u => (u.id === id ? { ...u, role: (data as any)?.role ?? target.role } : u))
+      );
       setUserRoleMessage('Rol de usuario actualizado correctamente.');
     }
   };

@@ -120,11 +120,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.warn('No se pudo verificar la unicidad del nombre de usuario:', err);
     }
 
+    const configuredRedirect =
+      (import.meta.env.VITE_AUTH_REDIRECT_URL as string | undefined)?.trim() || '';
+    const redirectUrl = configuredRedirect || window.location.origin;
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { username: cleanUsername },
+        emailRedirectTo: redirectUrl,
       },
     });
     if (error) return { error: error.message };
