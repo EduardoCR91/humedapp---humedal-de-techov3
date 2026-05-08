@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useLanguage } from './LanguageContext';
+import { Eye, EyeOff } from 'lucide-react';
 
 const AuthScreen: React.FC = () => {
   const { signIn, signUp } = useAuth();
@@ -12,6 +13,7 @@ const AuthScreen: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,7 +138,7 @@ const AuthScreen: React.FC = () => {
               required={mode === 'register'}
               value={username}
               onChange={e => setUsername(e.target.value)}
-              className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full p-3 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
               placeholder="Ej: humedal_guardian"
             />
             <p className="text-[10px] text-gray-400 mt-1">
@@ -156,7 +158,7 @@ const AuthScreen: React.FC = () => {
             required
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full p-3 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
             placeholder={
               lang === 'en' ? 'your-email@example.com' : 'tu-correo@ejemplo.com'
             }
@@ -167,17 +169,35 @@ const AuthScreen: React.FC = () => {
           <label className="block text-xs font-semibold text-gray-500 mb-1">
             {lang === 'en' ? 'Password' : 'Contraseña'}
           </label>
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            placeholder={
-              lang === 'en' ? 'Minimum 6 characters' : 'Mínimo 6 caracteres'
-            }
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              required
+              minLength={6}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full p-3 pr-11 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              placeholder={
+                lang === 'en' ? 'Minimum 6 characters' : 'Mínimo 6 caracteres'
+              }
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(prev => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-emerald-700 transition-colors"
+              aria-label={
+                showPassword
+                  ? lang === 'en'
+                    ? 'Hide password'
+                    : 'Ocultar contraseña'
+                  : lang === 'en'
+                  ? 'Show password'
+                  : 'Mostrar contraseña'
+              }
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         {error && (

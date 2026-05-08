@@ -23,7 +23,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab }) => {
 
   return (
     <nav
-      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-50 px-4 pb-3"
+      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-[2600] px-4 pb-3"
       style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)' }}
     >
       <div className="bg-white/95 backdrop-blur-md border border-white rounded-[26px] px-2 py-2 shadow-[0_-6px_24px_rgba(0,0,0,0.2)] flex justify-around items-center">

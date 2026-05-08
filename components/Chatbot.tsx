@@ -85,7 +85,7 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] animate-fadeIn px-3 pb-2">
+    <div className="relative flex flex-col min-h-[calc(100dvh-220px)] animate-fadeIn px-3 pb-2">
       <div className="eco-card rounded-[22px] p-4 text-emerald-950 shrink-0 mb-3">
         <h2 className="text-lg font-extrabold">
           {lang === 'en' ? 'EcoBot Assistant' : 'Asistente EcoBot'}
@@ -99,7 +99,7 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
 
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-2 space-y-4 no-scrollbar"
+        className="flex-1 overflow-y-auto p-2 pb-40 space-y-4 no-scrollbar"
       >
         {messages.map((msg, idx) => (
           <div 
@@ -132,24 +132,29 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
         )}
       </div>
 
-      <div className="mt-2 p-3 eco-card rounded-[22px] flex gap-2">
-        <input 
-          type="text"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-          placeholder={
-            lang === 'en' ? 'Ask about flora, fauna...' : 'Pregunta sobre flora, fauna...'
-          }
-          className="flex-1 bg-white/85 border border-white px-4 py-2 rounded-full text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-        />
-        <button 
-          onClick={handleSend}
-          disabled={loading || !input.trim()}
-          className="bg-emerald-700 text-white p-2.5 rounded-full disabled:opacity-50 shadow-md"
-        >
-          <Send size={20} />
-        </button>
+      <div
+        className="fixed left-1/2 -translate-x-1/2 w-full max-w-md px-3 z-[2550]"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 88px)' }}
+      >
+        <div className="p-3 eco-card rounded-[22px] flex gap-2">
+          <input 
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            placeholder={
+              lang === 'en' ? 'Ask about flora, fauna...' : 'Pregunta sobre flora, fauna...'
+            }
+            className="flex-1 bg-white/85 border border-white px-4 py-2 rounded-full text-base outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+          />
+          <button 
+            onClick={handleSend}
+            disabled={loading || !input.trim()}
+            className="bg-emerald-700 text-white p-2.5 rounded-full disabled:opacity-50 shadow-md"
+          >
+            <Send size={20} />
+          </button>
+        </div>
       </div>
     </div>
   );

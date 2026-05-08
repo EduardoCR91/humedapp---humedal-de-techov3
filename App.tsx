@@ -53,7 +53,7 @@ const AppContent: React.FC = () => {
         {user && (
           <div
             className="sticky top-0 z-30 px-4 pb-2 bg-gradient-to-b from-white/35 via-white/15 to-transparent backdrop-blur-[1px]"
-            style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 10px)' }}
+            style={{ paddingTop: 'max(env(safe-area-inset-top, 0px), 38px)' }}
           >
             <div className="w-full flex items-center justify-between gap-3">
               <div className="bg-white/85 px-3 py-1.5 rounded-full shadow-md border border-white/80 flex items-center gap-2 min-w-0 backdrop-blur-md">
@@ -81,7 +81,10 @@ const AppContent: React.FC = () => {
         )}
         <div
           className="relative z-10"
-          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 112px)' }}
+          style={{
+            paddingTop: user ? 0 : 'max(env(safe-area-inset-top, 0px), 38px)',
+            paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 112px)',
+          }}
         >
           {loading ? (
             <div className="p-6 text-center text-gray-500 text-sm">Cargando sesión...</div>

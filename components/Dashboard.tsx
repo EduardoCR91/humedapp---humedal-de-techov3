@@ -10,7 +10,6 @@ import {
   Bird,
   Leaf,
   ChevronRight,
-  Newspaper,
   PlusCircle,
   Image as ImageIcon,
   X,
@@ -34,6 +33,7 @@ interface NewsItem {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
+  const wetlandNewsFallbackImage = '/ecovigia-wetland-bg.png';
   const [news, setNews] = useState<NewsItem[]>([]);
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -629,11 +629,11 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
           ]).map((item) => (
             <div key={item.id} className="eco-card-soft p-3 rounded-2xl flex gap-3">
               <div className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
-                {item.image_url ? (
-                  <img src={item.image_url} alt="News" className="w-full h-full object-cover" />
-                ) : (
-                  <Newspaper size={22} className="text-emerald-600" />
-                )}
+                <img
+                  src={item.image_url || wetlandNewsFallbackImage}
+                  alt="News"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="flex flex-col justify-center flex-1">
                 <h4 className="font-semibold text-sm line-clamp-1">{item.title}</h4>

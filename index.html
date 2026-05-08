@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no">
   <title>EcoVigia!</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Leaflet CSS -->
@@ -14,6 +14,13 @@
       font-family: 'Inter', sans-serif;
       background-color: #f0f4f0;
       -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 100%;
+      margin: 0;
+    }
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
     }
     .safe-area-bottom {
       padding-bottom: env(safe-area-inset-bottom);

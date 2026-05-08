@@ -40,6 +40,31 @@ const Monitoring: React.FC = () => {
   const [username, setUsername] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const getReportPlaceholderByType = (type: 'fauna' | 'flora' | 'emergency') => {
+    const config =
+      type === 'fauna'
+        ? { emoji: '🐦', label: 'FAUNA', bg: '#1d4ed8' }
+        : type === 'flora'
+        ? { emoji: '🌿', label: 'FLORA', bg: '#047857' }
+        : { emoji: '⚠️', label: 'RIESGO', bg: '#b91c1c' };
+
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="${config.bg}" stop-opacity="0.95" />
+            <stop offset="100%" stop-color="#0f172a" stop-opacity="0.78" />
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#g)" />
+        <circle cx="400" cy="250" r="110" fill="#ffffff22" stroke="#ffffff55" stroke-width="4"/>
+        <text x="400" y="285" text-anchor="middle" font-size="90">${config.emoji}</text>
+        <text x="400" y="430" text-anchor="middle" fill="#ffffff" font-family="Inter, Arial" font-size="56" font-weight="700">${config.label}</text>
+      </svg>
+    `;
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  };
   const [lastReportPreview, setLastReportPreview] = useState<{ title: string; imageUrl: string } | null>(null);
   const [activeReportPreview, setActiveReportPreview] = useState<{ title: string; imageUrl: string; description: string; user: string; date: string } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -275,7 +300,7 @@ const Monitoring: React.FC = () => {
       return;
     }
     const finalCoords = tempMarkerCoords || vm.userCoords || [4.642, -74.148];
-    const finalImage = capturedImage || `https://picsum.photos/seed/${Date.now()}/400/300`;
+    const finalImage = capturedImage || getReportPlaceholderByType(newReportDraft.type);
 
     if (editingReportId) {
       vm.updateReport(editingReportId, {

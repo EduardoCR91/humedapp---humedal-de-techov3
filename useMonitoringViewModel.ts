@@ -4,6 +4,31 @@ import { EnvironmentalReport, WeatherData } from './types';
 import { getWetlandWeather } from './services/geminiService';
 import { supabase } from './services/supabaseClient';
 
+const buildReportPlaceholder = (type: 'fauna' | 'flora' | 'emergency') => {
+  const config =
+    type === 'fauna'
+      ? { emoji: '🐦', label: 'FAUNA', bg: '#1d4ed8' }
+      : type === 'flora'
+      ? { emoji: '🌿', label: 'FLORA', bg: '#047857' }
+      : { emoji: '⚠️', label: 'RIESGO', bg: '#b91c1c' };
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${config.bg}" stop-opacity="0.95" />
+          <stop offset="100%" stop-color="#0f172a" stop-opacity="0.78" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#g)" />
+      <circle cx="400" cy="250" r="110" fill="#ffffff22" stroke="#ffffff55" stroke-width="4"/>
+      <text x="400" y="285" text-anchor="middle" font-size="90">${config.emoji}</text>
+      <text x="400" y="430" text-anchor="middle" fill="#ffffff" font-family="Inter, Arial" font-size="56" font-weight="700">${config.label}</text>
+    </svg>
+  `;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
 const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const R = 6371e3;
   const p1 = (lat1 * Math.PI) / 180;
@@ -51,7 +76,7 @@ export const useMonitoringViewModel = () => {
           description: r.description || '',
           timestamp: new Date(r.created_at),
           coords: [r.lat ?? 4.642, r.lng ?? -74.148],
-          imageUrl: r.image_url || `https://picsum.photos/seed/report-${index}/400/300`,
+          imageUrl: r.image_url || buildReportPlaceholder(r.type),
           remoteId: r.id,
           ownerId: r.user_id || null,
         }));
