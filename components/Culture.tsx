@@ -150,8 +150,14 @@ const Culture: React.FC = () => {
       </section>
 
       {selectedEvent && (
-        <div className="fixed inset-0 z-[2500] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="eco-card rounded-3xl max-w-md w-full p-5 relative">
+        <div
+          className="fixed inset-0 z-[2500] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setSelectedEvent(null)}
+        >
+          <div
+            className="eco-card rounded-3xl max-w-md w-full p-5 relative max-h-[88dvh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
             <button
               onClick={() => setSelectedEvent(null)}
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"

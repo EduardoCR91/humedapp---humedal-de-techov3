@@ -335,7 +335,7 @@ const Education: React.FC = () => {
               rows={3}
               required
             />
-            <div className="flex gap-3 items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
               <div className="flex-1">
                 <label className="block text-[10px] font-semibold text-gray-500 mb-1">
                   Fecha del evento
@@ -344,10 +344,15 @@ const Education: React.FC = () => {
                   type="date"
                   value={eventDate}
                   onChange={e => setEventDate(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  style={{ color: '#000000' }}
+                  className="event-date-input w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-black-500 appearance-none"
+                  style={{ color: '#000000', WebkitTextFillColor: '#000000' }}
                   required
                 />
+                {!eventDate && (
+                  <p className="text-[10px] text-emerald-50/85 mt-1">
+                    Selecciona fecha
+                  </p>
+                )}
               </div>
               <div className="flex-1">
                 <label className="block text-[10px] font-semibold text-gray-500 mb-1">
@@ -357,10 +362,15 @@ const Education: React.FC = () => {
                   type="time"
                   value={eventTime}
                   onChange={e => setEventTime(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  style={{ color: '#000000' }}
+                  className="event-time-input w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
+                  style={{ color: '#000000', WebkitTextFillColor: '#000000' }}
                   required
                 />
+                {!eventTime && (
+                  <p className="text-[10px] text-emerald-50/85 mt-1">
+                    Selecciona hora
+                  </p>
+                )}
               </div>
               <div className="flex-1">
                 <label className="block text-[10px] font-semibold text-gray-500 mb-1">
@@ -369,11 +379,16 @@ const Education: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full p-2.5 rounded-xl border border-emerald-100/40 text-xs text-emerald-50 flex items-center justify-center gap-2 eco-forest-btn"
+                  className="w-full min-h-[44px] px-3 py-2.5 rounded-xl border border-emerald-100/40 text-xs text-emerald-50 flex items-center justify-center gap-2 eco-forest-btn"
                 >
                   <ImageIcon size={16} />
                   {imagePreview ? 'Cambiar imagen' : 'Subir imagen'}
                 </button>
+                {!imagePreview && (
+                  <p className="text-[10px] text-emerald-50/85 mt-1">
+                    Sin imagen seleccionada
+                  </p>
+                )}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -444,7 +459,7 @@ const Education: React.FC = () => {
                         )}
                       </div>
                       <div className="flex-1">
-                        <p className="text-[10px] text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
+                        <p className="text-[10px] uppercase font-semibold mb-1 flex items-center gap-1" style={{ color: 'black' }}>
                           Evento •{' '}
                           {new Date(ev.eventDate).toLocaleDateString(undefined, {
                             day: '2-digit',
@@ -464,7 +479,7 @@ const Education: React.FC = () => {
                         <p className="text-xs text-gray-600 mt-1 line-clamp-2">
                           {ev.description}
                         </p>
-                        <p className="text-[10px] text-gray-400 mt-1">
+                        <p className="text-[10px] mt-1" style={{ color: 'black' }}>
                           Publicado el{' '}
                           {new Date(ev.publishedAt).toLocaleDateString(undefined, {
                             day: '2-digit',
@@ -566,7 +581,7 @@ const Education: React.FC = () => {
           onClick={() => setSelectedTopic(null)}
         >
           <div
-            className="eco-card rounded-3xl max-w-md w-full p-5 max-h-[80vh] overflow-y-auto"
+            className="eco-card rounded-3xl max-w-md w-full p-5 max-h-[88dvh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
             <button
@@ -780,6 +795,22 @@ const Education: React.FC = () => {
           </div>
         </div>
       )}
+
+      <style>{`
+        .event-date-input::-webkit-datetime-edit,
+        .event-time-input::-webkit-datetime-edit,
+        .event-date-input::-webkit-datetime-edit-text,
+        .event-time-input::-webkit-datetime-edit-text,
+        .event-date-input::-webkit-datetime-edit-month-field,
+        .event-date-input::-webkit-datetime-edit-day-field,
+        .event-date-input::-webkit-datetime-edit-year-field,
+        .event-time-input::-webkit-datetime-edit-hour-field,
+        .event-time-input::-webkit-datetime-edit-minute-field,
+        .event-time-input::-webkit-datetime-edit-ampm-field {
+          color: #000 !important;
+          -webkit-text-fill-color: #000 !important;
+        }
+      `}</style>
     </div>
   );
 };

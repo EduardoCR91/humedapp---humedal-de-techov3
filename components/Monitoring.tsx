@@ -336,40 +336,67 @@ const Monitoring: React.FC = () => {
     setShowConfirmation(true);
   };
 
-  const getSlices = () => {
-    const total = vm.stats.total || 1;
-    const slices = [
-      { value: vm.stats.fauna, color: '#3b82f6', label: 'Fauna' },
-      { value: vm.stats.flora, color: '#10b981', label: 'Flora' },
-      { value: vm.stats.emergency, color: '#ef4444', label: 'Riesgo' }
+  const summaryItems = useMemo(() => {
+    const total = vm.stats.total || 0;
+    const items = [
+      {
+        key: 'flora',
+        label: lang === 'en' ? 'Flora' : 'Flora',
+        value: vm.stats.flora,
+        icon: Leaf,
+        color: '#22c55e',
+      },
+      {
+        key: 'fauna',
+        label: lang === 'en' ? 'Fauna' : 'Fauna',
+        value: vm.stats.fauna,
+        icon: Bird,
+        color: '#3b82f6',
+      },
+      {
+        key: 'risk',
+        label: lang === 'en' ? 'Risk' : 'Riesgo',
+        value: vm.stats.emergency,
+        icon: ShieldAlert,
+        color: '#ef4444',
+      },
     ];
 
-    let cumulativePercent = 0;
-    return slices.map(slice => {
-      const startPercent = cumulativePercent;
-      const percent = slice.value / total;
-      cumulativePercent += percent;
+    return items.map(item => ({
+      ...item,
+      pct: total > 0 ? Math.round((item.value / total) * 100) : 0,
+    }));
+  }, [vm.stats.total, vm.stats.flora, vm.stats.fauna, vm.stats.emergency, lang]);
 
-      const [startX, startY] = getCoordinatesForPercent(startPercent);
-      const [endX, endY] = getCoordinatesForPercent(cumulativePercent);
-      const largeArcFlag = percent > 0.5 ? 1 : 0;
+  const ringTicks = useMemo(() => {
+    const totalTicks = 56;
+    const total = vm.stats.total || 0;
+    const floraTicks = total > 0 ? Math.round((vm.stats.flora / total) * totalTicks) : 0;
+    const faunaTicks = total > 0 ? Math.round((vm.stats.fauna / total) * totalTicks) : 0;
+    const riskTicks = Math.max(0, totalTicks - floraTicks - faunaTicks);
 
-      const pathData = [
-        `M 10 10`,
-        `L ${startX} ${startY}`,
-        `A 10 10 0 ${largeArcFlag} 1 ${endX} ${endY}`,
-        `Z`,
-      ].join(' ');
+    const colors: string[] = [];
+    for (let i = 0; i < floraTicks; i++) colors.push('#22c55e');
+    for (let i = 0; i < faunaTicks; i++) colors.push('#3b82f6');
+    for (let i = 0; i < riskTicks; i++) colors.push('#ef4444');
+    while (colors.length < totalTicks) colors.push('#d1d5db');
 
-      return { pathData, color: slice.color, label: slice.label, value: slice.value };
+    return Array.from({ length: totalTicks }).map((_, index) => {
+      const angle = -90 + index * (360 / totalTicks);
+      const rad = (angle * Math.PI) / 180;
+      const inner = 77;
+      const outer = 93;
+      const cx = 100;
+      const cy = 100;
+      return {
+        x1: cx + inner * Math.cos(rad),
+        y1: cy + inner * Math.sin(rad),
+        x2: cx + outer * Math.cos(rad),
+        y2: cy + outer * Math.sin(rad),
+        color: colors[index],
+      };
     });
-  };
-
-  const getCoordinatesForPercent = (percent: number) => {
-    const x = Math.cos(2 * Math.PI * percent);
-    const y = Math.sin(2 * Math.PI * percent);
-    return [10 + x * 10, 10 + y * 10];
-  };
+  }, [vm.stats.total, vm.stats.flora, vm.stats.fauna, vm.stats.emergency]);
 
   const { pagedReports, totalLimited } = useMemo(() => {
     const ordered = [...vm.filteredReports].sort(
@@ -555,50 +582,89 @@ const Monitoring: React.FC = () => {
       </div>
 
       <section className="mb-6 animate-fadeIn text-black">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-bold text-black flex items-center gap-2">
-            <BarChart3 size={20} className="text-black" />
-            {lang === 'en' ? 'Distribution of reports' : 'Distribución de Reportes'}
-          </h3>
-          <button 
-            onClick={() => setShowStats(!showStats)} 
-            className="text-xs font-bold text-emerald-900 uppercase tracking-widest flex items-center gap-1"
-          >
-            {showStats ? <ChevronUp size={14}/> : <ChevronDown size={14}/>}
-            {showStats ? (lang === 'en' ? 'Hide': 'Ocultar') : (lang === 'en' ? 'Show' : 'Ver Detalle')}
-          </button>
-        </div>
+        <div className="eco-card-soft rounded-3xl p-4 border border-white/75 shadow-[0_12px_26px_rgba(8,28,20,0.28)]">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-lg font-extrabold text-black flex items-center gap-2">
+              <BarChart3 size={20} className="text-black" />
+              {lang === 'en' ? 'Distribution of reports' : 'Distribución de Reportes'}
+            </h3>
+            <button
+              onClick={() => setShowStats(!showStats)}
+              className="px-3 py-1.5 rounded-full eco-forest-btn text-white border border-emerald-300/30 text-xs font-extrabold tracking-wide flex items-center gap-1.5 shadow-md"
+            >
+              <Eye size={13} />
+              {showStats ? <ChevronUp size={14}/> : <ChevronDown size={14}/>}
+              {lang === 'en'
+                ? (showStats ? 'Hide report chart' : 'View report chart!')
+                : (showStats ? 'Ocultar gráfico' : 'Ver gráfico de reportes!')}
+            </button>
+          </div>
 
-        {showStats && (
-          <div className="eco-forest-card p-6 rounded-3xl flex flex-col items-center gap-6 animate-fadeIn">
-            <div className="relative w-40 h-40">
-              <svg viewBox="0 0 20 20" className="w-full h-full transform -rotate-90">
-                {getSlices().map((slice, i) => (
-                  <path key={i} d={slice.pathData} fill={slice.color} className="transition-all hover:opacity-80 cursor-pointer" />
+          {showStats && (
+          <div className="eco-card-soft p-4 rounded-3xl animate-fadeIn border border-white/75 shadow-[0_12px_28px_rgba(8,28,20,1.22)]">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-extrabold text-black">
+                {lang === 'en' ? 'Report summary' : 'Resumen de reportes'}
+              </h4>
+
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-3 items-center">
+              <div className="mx-auto relative w-[200px] h-[200px]">
+                <svg viewBox="0 0 200 200" className="w-full h-full">
+                  {ringTicks.map((tick, i) => (
+                    <line
+                      key={i}
+                      x1={tick.x1}
+                      y1={tick.y1}
+                      x2={tick.x2}
+                      y2={tick.y2}
+                      stroke={tick.color}
+                      strokeWidth="4.5"
+                      strokeLinecap="round"
+                    />
+                  ))}
+                  <circle cx="100" cy="100" r="67" fill="rgba(255,255,255,0.92)" />
+                  <text x="100" y="96" textAnchor="middle" className="fill-black text-[40px] font-extrabold">
+                    {vm.stats.total}
+                  </text>
+                  <text x="100" y="122" textAnchor="middle" className="fill-black text-[18px] font-semibold">
+                    {lang === 'en' ? 'Total' : 'Total'}
+                  </text>
+                  <text x="100" y="146" textAnchor="middle" className="fill-black text-[20px]">
+                    🍃
+                  </text>
+                </svg>
+              </div>
+
+              <div className="flex flex-col gap-2.5">
+                {summaryItems.map(item => (
+                  <div key={item.key} className="bg-white/88 border border-white rounded-2xl p-3 shadow-sm">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <item.icon size={18} style={{ color: item.color }} />
+                        <span className="text-sm font-bold text-black">{item.label}</span>
+                      </div>
+                      <div className="text-right leading-tight">
+                        <p className="text-2xl font-extrabold text-black">{item.value}</p>
+                        <p className="text-xs font-semibold text-black">{item.pct}%</p>
+                      </div>
+                    </div>
+                    <div className="w-full h-3 rounded-full bg-emerald-50 overflow-hidden">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${item.pct}%`,
+                          background: `linear-gradient(90deg, ${item.color}, ${item.color}CC)`,
+                        }}
+                      />
+                    </div>
+                  </div>
                 ))}
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-white rounded-full w-24 h-24 flex flex-col items-center justify-center shadow-inner">
-                  <span className="text-2xl font-black text-emerald-900">{vm.stats.total}</span>
-                  <span className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Total</span>
-                </div>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 w-full">
-              {[
-                { label: lang === 'en' ? 'Fauna' : 'Fauna', color: 'bg-blue-500', value: vm.stats.fauna },
-                { label: lang === 'en' ? 'Flora' : 'Flora', color: 'bg-emerald-500', value: vm.stats.flora },
-                { label: lang === 'en' ? 'Risk' : 'Riesgo', color: 'bg-red-500', value: vm.stats.emergency },
-              ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <div className={`w-3 h-3 ${item.color} rounded-full mb-2 shadow-sm`} />
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-tight">{item.label}</span>
-                  <span className="text-sm font-bold text-gray-800">{item.value}</span>
-                </div>
-              ))}
-            </div>
           </div>
-        )}
+          )}
+        </div>
       </section>
 
       <div className="flex flex-col gap-3 mb-4">
@@ -637,21 +703,21 @@ const Monitoring: React.FC = () => {
             <button
               onClick={() => setPage(0)}
               disabled={page === 0}
-              className="text-[11px] font-semibold text-font-black disabled:text-font-black"
+              className="text-sm md:text-base font-extrabold text-emerald-50 drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] disabled:opacity-80"
             >
               {lang === 'en' ? 'Latest reports' : 'Últimos reportes'}
             </button>
             <button
               onClick={() => canPrev && setPage(p => p - 1)}
               disabled={!canPrev}
-              className="px-3 py-1 rounded-full text-[11px] eco-forest-btn disabled:opacity-50"
+              className="px-4 py-2 rounded-full text-xs md:text-sm font-semibold eco-forest-btn disabled:opacity-50"
             >{lang === 'en' ? 'Previous' : 'Anterior'}
               
             </button>
             <button
               onClick={() => canNext && setPage(p => p + 1)}
               disabled={!canNext}
-              className="px-3 py-1 rounded-full text-[11px] eco-forest-btn disabled:opacity-50"
+              className="px-4 py-2 rounded-full text-xs md:text-sm font-semibold eco-forest-btn disabled:opacity-50"
             >{lang === 'en' ? 'Next' : 'Siguiente'}
               
             </button>
@@ -899,8 +965,14 @@ const Monitoring: React.FC = () => {
       )}
 
       {activeReportPreview && (
-        <div className="fixed inset-0 z-[2200] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="eco-forest-card rounded-3xl max-w-sm w-full p-4">
+        <div
+          className="fixed inset-0 z-[2200] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setActiveReportPreview(null)}
+        >
+          <div
+            className="eco-forest-card rounded-3xl max-w-sm w-full p-4"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-3">
               <h4 className="text-sm font-bold text-emerald-900">Detalle del reporte</h4>
               <button
