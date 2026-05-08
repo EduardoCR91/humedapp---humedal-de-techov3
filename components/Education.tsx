@@ -344,8 +344,8 @@ const Education: React.FC = () => {
                   type="date"
                   value={eventDate}
                   onChange={e => setEventDate(e.target.value)}
-                  className="event-date-input w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-black-500 appearance-none"
-                  style={{ color: '#000000', WebkitTextFillColor: '#000000' }}
+                  className="w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
+                  style={{ color: '#000000' }}
                   required
                 />
                 {!eventDate && (
@@ -362,8 +362,8 @@ const Education: React.FC = () => {
                   type="time"
                   value={eventTime}
                   onChange={e => setEventTime(e.target.value)}
-                  className="event-time-input w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
-                  style={{ color: '#000000', WebkitTextFillColor: '#000000' }}
+                  className="w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
+                  style={{ color: '#000000' }}
                   required
                 />
                 {!eventTime && (
@@ -459,7 +459,7 @@ const Education: React.FC = () => {
                         )}
                       </div>
                       <div className="flex-1">
-                        <p className="text-[10px] uppercase font-semibold mb-1 flex items-center gap-1" style={{ color: 'black' }}>
+                        <p className="text-[10px] text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
                           Evento •{' '}
                           {new Date(ev.eventDate).toLocaleDateString(undefined, {
                             day: '2-digit',
@@ -479,7 +479,7 @@ const Education: React.FC = () => {
                         <p className="text-xs text-gray-600 mt-1 line-clamp-2">
                           {ev.description}
                         </p>
-                        <p className="text-[10px] mt-1" style={{ color: 'black' }}>
+                        <p className="text-[10px] text-gray-400 mt-1">
                           Publicado el{' '}
                           {new Date(ev.publishedAt).toLocaleDateString(undefined, {
                             day: '2-digit',
@@ -795,22 +795,6 @@ const Education: React.FC = () => {
           </div>
         </div>
       )}
-
-      <style>{`
-        .event-date-input::-webkit-datetime-edit,
-        .event-time-input::-webkit-datetime-edit,
-        .event-date-input::-webkit-datetime-edit-text,
-        .event-time-input::-webkit-datetime-edit-text,
-        .event-date-input::-webkit-datetime-edit-month-field,
-        .event-date-input::-webkit-datetime-edit-day-field,
-        .event-date-input::-webkit-datetime-edit-year-field,
-        .event-time-input::-webkit-datetime-edit-hour-field,
-        .event-time-input::-webkit-datetime-edit-minute-field,
-        .event-time-input::-webkit-datetime-edit-ampm-field {
-          color: #000 !important;
-          -webkit-text-fill-color: #000 !important;
-        }
-      `}</style>
     </div>
   );
 };
