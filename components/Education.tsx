@@ -47,6 +47,7 @@ const Education: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<TopicId | null>(null);
+  const notifiedEventIdsRef = useRef<Set<string>>(new Set());
 
   const categories: {
     id: TopicId;
@@ -125,6 +126,7 @@ const Education: React.FC = () => {
             publishedAt: row.published_at,
           }));
           setEvents(mapped);
+          notifiedEventIdsRef.current = new Set(mapped.map(ev => ev.id));
           try {
             window.localStorage.setItem('ecovigia_education_events', JSON.stringify(mapped));
           } catch {
@@ -138,6 +140,50 @@ const Education: React.FC = () => {
 
     loadEvents().catch(() => setLoadingEvents(false));
   }, []);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('education-events-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'education_events' },
+        async payload => {
+          const row = payload.new as any;
+          if (!row?.id) return;
+          if (notifiedEventIdsRef.current.has(row.id)) return;
+          notifiedEventIdsRef.current.add(row.id);
+
+          const newEvent: EducationEvent = {
+            id: row.id as string,
+            title: row.title,
+            description: row.description,
+            imageUrl: row.image_url || null,
+            eventDate: row.event_date,
+            eventTime: row.event_time || null,
+            publishedAt: row.published_at,
+          };
+
+          setEvents(prev => {
+            const withoutOld = prev.filter(ev => ev.id !== newEvent.id);
+            return [...withoutOld, newEvent].sort(
+              (a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
+            );
+          });
+
+          const perm = await requestPermission();
+          if (perm === 'granted') {
+            notify('Nuevo evento de educación ambiental', {
+              body: `${newEvent.title} · ${newEvent.eventDate}${newEvent.eventTime ? ` ${newEvent.eventTime.slice(0, 5)}` : ''}`,
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [notify, requestPermission]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -195,6 +241,7 @@ const Education: React.FC = () => {
     }
 
     if (!error && data) {
+      const isNewEvent = !editingEventId;
       const newEvent: EducationEvent = {
         id: data.id,
         title: data.title,
@@ -217,6 +264,10 @@ const Education: React.FC = () => {
       setImagePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
       setEditingEventId(null);
+
+      if (isNewEvent) {
+        notifiedEventIdsRef.current.add(newEvent.id);
+      }
     } else if (error) {
       alert('No se pudo guardar el evento. Revisa tus permisos de administrador.');
     }

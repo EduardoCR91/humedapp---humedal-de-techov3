@@ -1,29 +1,63 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 interface NotificationContextValue {
   isSupported: boolean;
-  permission: NotificationPermission | 'default';
-  requestPermission: () => Promise<NotificationPermission | 'default'>;
+  permission: NotificationPermission | 'default' | 'denied' | 'prompt' | 'prompt-with-rationale' | 'granted';
+  requestPermission: () => Promise<NotificationPermission | 'default' | 'denied' | 'prompt' | 'prompt-with-rationale' | 'granted'>;
   notify: (title: string, options?: NotificationOptions) => void;
 }
 
 const NotificationContext = createContext<NotificationContextValue | undefined>(undefined);
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [permission, setPermission] = useState<NotificationPermission | 'default'>('default');
+  const [permission, setPermission] = useState<NotificationPermission | 'default' | 'denied' | 'prompt' | 'prompt-with-rationale' | 'granted'>('default');
   const [isSupported, setIsSupported] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      setIsSupported(true);
-      setPermission(Notification.permission);
-    }
+    const init = async () => {
+      if (Capacitor.isNativePlatform()) {
+        setIsSupported(true);
+        try {
+          const current = await LocalNotifications.checkPermissions();
+          setPermission(current.display as any);
+          if (current.display !== 'granted') {
+            const requested = await LocalNotifications.requestPermissions();
+            setPermission(requested.display as any);
+          }
+        } catch {
+          setPermission('default');
+        }
+        return;
+      }
+
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        setIsSupported(true);
+        setPermission(Notification.permission);
+      }
+    };
+
+    init().catch(() => undefined);
   }, []);
 
   const requestPermission = async () => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const requested = await LocalNotifications.requestPermissions();
+        setPermission(requested.display as any);
+        return requested.display as any;
+      } catch {
+        return 'default';
+      }
+    }
+
     if (!isSupported || !('Notification' in window) || Notification.permission === 'granted') {
-      setPermission(Notification.permission);
-      return Notification.permission;
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        setPermission(Notification.permission);
+        return Notification.permission;
+      }
+      return 'default';
     }
     const result = await Notification.requestPermission();
     setPermission(result);
@@ -31,7 +65,24 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const notify = (title: string, options?: NotificationOptions) => {
-    if (!isSupported || Notification.permission !== 'granted') return;
+    if (!isSupported) return;
+
+    if (Capacitor.isNativePlatform()) {
+      if (permission !== 'granted') return;
+      LocalNotifications.schedule({
+        notifications: [
+          {
+            id: Date.now() % 2147483000,
+            title,
+            body: options?.body ?? '',
+            schedule: { at: new Date(Date.now() + 300) },
+          },
+        ],
+      }).catch(() => undefined);
+      return;
+    }
+
+    if (Notification.permission !== 'granted') return;
     try {
       new Notification(title, options);
     } catch {
@@ -53,4 +104,3 @@ export const useNotifications = () => {
   }
   return ctx;
 };
-
