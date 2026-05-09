@@ -477,7 +477,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       )}
 
       <section>
-        <h3 className="text-lg font-bold text-emerald-950 mb-3">
+        <h3 className="text-xl font-bold text-white-950 mb-3">
           {lang === 'en' ? 'Recent news' : 'Noticias Recientes'}
         </h3>
         {isAdmin && (

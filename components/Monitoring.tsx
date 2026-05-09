@@ -703,7 +703,7 @@ const Monitoring: React.FC = () => {
             <button
               onClick={() => setPage(0)}
               disabled={page === 0}
-              className="text-sm md:text-base font-extrabold text-emerald-50 drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] disabled:opacity-80"
+              className="text-sm md:text-base font-extrabold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] disabled:opacity-80"
             >
               {lang === 'en' ? 'Latest reports' : 'Últimos reportes'}
             </button>

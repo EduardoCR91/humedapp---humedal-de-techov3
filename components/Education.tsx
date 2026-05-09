@@ -203,7 +203,7 @@ const Education: React.FC = () => {
 
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isAdmin || !title.trim() || !description.trim() || !eventDate || !eventTime) return;
+    if (!isAdmin || !user || !title.trim() || !description.trim() || !eventDate || !eventTime) return;
     setSavingEvent(true);
 
     let data: any = null;
@@ -233,6 +233,7 @@ const Education: React.FC = () => {
           image_url: imagePreview,
           event_date: eventDate,
           event_time: eventTime,
+          created_by: user.id,
         })
         .select('id, title, description, image_url, event_date, event_time, published_at')
         .single();
@@ -269,7 +270,7 @@ const Education: React.FC = () => {
         notifiedEventIdsRef.current.add(newEvent.id);
       }
     } else if (error) {
-      alert('No se pudo guardar el evento. Revisa tus permisos de administrador.');
+      alert(`No se pudo guardar el evento: ${error.message ?? 'Error desconocido'}`);
     }
 
     setSavingEvent(false);
@@ -351,8 +352,8 @@ const Education: React.FC = () => {
 
       <section className="mt-2">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-bold text-black flex items-center gap-2">
-            <CalendarDays size={20} className="text-black" />
+          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <CalendarDays size={20} className="text-white" />
             Eventos de Educación Ambiental
           </h3>
         </div>
@@ -488,7 +489,7 @@ const Education: React.FC = () => {
           <>
             {upcomingEvents.length > 0 && (
               <div className="mb-4">
-                <h4 className="text-xs font-semibold text-emerald-700 uppercase mb-2 flex items-center gap-1">
+                <h4 className="text-md font-bold text-white uppercase mb-2 flex items-center gap-1">
                   <Clock size={12} />
                   Próximos eventos
                 </h4>
@@ -598,7 +599,7 @@ const Education: React.FC = () => {
 
             {pastEvents.length > 0 && (
               <div className="mt-4">
-                <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2 flex items-center gap-1">
+                <h4 className="text-md font-semibold text-white uppercase mb-2 flex items-center gap-1">
                   <CalendarDays size={12} />
                   Eventos pasados
                 </h4>

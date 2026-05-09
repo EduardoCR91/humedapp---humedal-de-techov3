@@ -68,17 +68,21 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (!isSupported) return;
 
     if (Capacitor.isNativePlatform()) {
-      if (permission !== 'granted') return;
-      LocalNotifications.schedule({
-        notifications: [
-          {
-            id: Date.now() % 2147483000,
-            title,
-            body: options?.body ?? '',
-            schedule: { at: new Date(Date.now() + 300) },
-          },
-        ],
-      }).catch(() => undefined);
+      LocalNotifications.checkPermissions()
+        .then(current => {
+          if (current.display !== 'granted') return;
+          return LocalNotifications.schedule({
+            notifications: [
+              {
+                id: Date.now() % 2147483000,
+                title,
+                body: options?.body ?? '',
+                schedule: { at: new Date(Date.now() + 300) },
+              },
+            ],
+          });
+        })
+        .catch(() => undefined);
       return;
     }
 
