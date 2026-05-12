@@ -389,55 +389,55 @@ const Education: React.FC = () => {
             />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
               <div className="flex-1">
-                <label className="block text-[10px] font-semibold text-gray-500 mb-1">
+                <label className="block text-[10px] font-semibold text-white mb-1">
                   Fecha del evento
                 </label>
                 <input
                   type="date"
                   value={eventDate}
                   onChange={e => setEventDate(e.target.value)}
-                  className="w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
+                  className="w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
                   style={{ color: '#000000' }}
                   required
                 />
                 {!eventDate && (
-                  <p className="text-[10px] text-emerald-50/85 mt-1">
+                  <p className="text-[10px] text-white mt-1">
                     Selecciona fecha
                   </p>
                 )}
               </div>
               <div className="flex-1">
-                <label className="block text-[10px] font-semibold text-gray-500 mb-1">
+                <label className="block text-[10px] font-semibold text-white mb-1">
                   Hora del evento
                 </label>
                 <input
                   type="time"
                   value={eventTime}
                   onChange={e => setEventTime(e.target.value)}
-                  className="w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
+                  className="w-full min-h-[44px] p-2.5 rounded-xl border border-gray-200 text-sm bg-white text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
                   style={{ color: '#000000' }}
                   required
                 />
                 {!eventTime && (
-                  <p className="text-[10px] text-emerald-50/85 mt-1">
+                  <p className="text-[10px] text-white mt-1">
                     Selecciona hora
                   </p>
                 )}
               </div>
               <div className="flex-1">
-                <label className="block text-[10px] font-semibold text-gray-500 mb-1">
+                <label className="block text-[10px] font-semibold text-white mb-1">
                   Imagen (opcional)
                 </label>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full min-h-[44px] px-3 py-2.5 rounded-xl border border-emerald-100/40 text-xs text-emerald-50 flex items-center justify-center gap-2 eco-forest-btn"
+                  className="w-full min-h-[44px] px-3 py-2.5 rounded-xl border border-emerald-100/40 text-xs text-white flex items-center justify-center gap-2 eco-forest-btn"
                 >
                   <ImageIcon size={16} />
                   {imagePreview ? 'Cambiar imagen' : 'Subir imagen'}
                 </button>
                 {!imagePreview && (
-                  <p className="text-[10px] text-emerald-50/85 mt-1">
+                  <p className="text-[10px] text-white mt-1">
                     Sin imagen seleccionada
                   </p>
                 )}

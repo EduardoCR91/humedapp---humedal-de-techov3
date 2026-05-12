@@ -3,12 +3,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import { AppTab } from '../types';
 import {
   CloudSun,
-  Sun,
-  Wind,
-  Droplets,
+  Thermometer,
+  Droplet,
+  CircleDot,
+  Waves,
+  ShieldCheck,
   AlertTriangle,
   Bird,
-  Leaf,
   ChevronRight,
   PlusCircle,
   Image as ImageIcon,
@@ -32,9 +33,20 @@ interface NewsItem {
   published_at?: string | null;
 }
 
+interface ClimateReading {
+  temperature: number;
+  ph: number;
+  tds: number;
+  ntu: number;
+  quality: string;
+  created_at?: string;
+}
+
 const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   const wetlandNewsFallbackImage = '/ecovigia-wetland-bg.png';
   const [news, setNews] = useState<NewsItem[]>([]);
+  const [climate, setClimate] = useState<ClimateReading | null>(null);
+  const [climateError, setClimateError] = useState<string | null>(null);
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [newsTitle, setNewsTitle] = useState('');
@@ -48,6 +60,14 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   const newsVideoRef = useRef<HTMLVideoElement | null>(null);
   const newsCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const { lang } = useLanguage();
+
+  const qualityBadge = (q?: string | null) => {
+    const value = (q || '').toLowerCase();
+    if (value.includes('deficiente') || value.includes('mala')) return { label: q || 'Deficiente', cls: 'bg-red-100 text-red-700' };
+    if (value.includes('regular')) return { label: q || 'Regular', cls: 'bg-amber-100 text-amber-700' };
+    if (value.includes('buena') || value.includes('óptima') || value.includes('optima')) return { label: q || 'Óptima', cls: 'bg-emerald-100 text-emerald-700' };
+    return { label: q || 'Sin dato', cls: 'bg-slate-100 text-slate-600' };
+  };
 
   useEffect(() => {
     const loadNews = async () => {
@@ -83,6 +103,54 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
     loadNews().catch(() => {
       // Silenciar errores en UI; se puede loguear si es necesario
     });
+  }, []);
+
+  useEffect(() => {
+    const loadClimate = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('climate_readings')
+          .select('temperature, ph, tds, ntu, quality, created_at')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (!error && data) {
+          setClimate(data as ClimateReading);
+          setClimateError(null);
+        } else if (error) {
+          setClimateError(error.message || 'No se pudo cargar climate_readings');
+        }
+      } catch (e: any) {
+        setClimateError(e?.message || 'No se pudo cargar climate_readings');
+      }
+    };
+
+    loadClimate().catch(() => undefined);
+
+    const channel = supabase
+      .channel('dashboard-climate-readings')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'climate_readings' },
+        payload => {
+          const row = payload.new as any;
+          if (!row) return;
+          setClimate({
+            temperature: Number(row.temperature),
+            ph: Number(row.ph),
+            tds: Number(row.tds),
+            ntu: Number(row.ntu),
+            quality: String(row.quality ?? ''),
+            created_at: row.created_at,
+          });
+          setClimateError(null);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {
@@ -348,51 +416,109 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         <ChevronRight size={24} className="text-white relative z-10" />
       </button>
 
-      {/* Weather & Env Stats (Mocked) */}
+      {/* Climate data */}
       <section className="eco-card p-4 rounded-[24px]">
-        <div className="flex items-center gap-2 mb-3">
-          <CloudSun size={18} className="text-emerald-700" />
-          <div className="leading-tight">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-800">
-              {lang === 'en' ? 'Techo Wetland' : 'Humedal de Techo'}
-            </p>
-            <p className="text-[10px] text-slate-500">
-              {lang === 'en'
-                ? 'Estimated environmental data of the wetland'
-                : 'Datos ambientales estimados del humedal'}
-            </p>
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2">
+            <CloudSun size={18} className="text-emerald-700" />
+            <div className="leading-tight">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-800">
+                {lang === 'en' ? 'Techo Wetland' : 'Humedal de Techo'}
+              </p>
+              <p className="text-[10px] text-slate-500">
+                {lang === 'en'
+                  ? 'Current environmental data'
+                  : 'Datos ambientales actuales'}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="flex justify-between items-center">
-        <div className="flex flex-col items-center gap-1">
-          <Sun className="text-amber-400" size={28} />
-          <span className="text-[22px] font-extrabold text-slate-800">18°C</span>
-          <span className="text-[12px] text-slate-500 font-medium">
-            {lang === 'en' ? 'Sunny' : 'Soleado'}
+          <span className="text-[10px] px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold">
+            ● {lang === 'en' ? 'Real-time' : 'En tiempo real'}
           </span>
         </div>
-        <div className="h-14 w-[1px] bg-slate-200" />
-        <div className="flex flex-col items-center gap-1">
-          <Droplets className="text-emerald-500" size={28} />
-          <span className="text-[22px] font-extrabold text-slate-800">65%</span>
-          <span className="text-[12px] text-slate-500 font-medium">
-            {lang === 'en' ? 'Humidity' : 'Humedad'}
-          </span>
-        </div>
-        <div className="h-14 w-[1px] bg-slate-200" />
-        <div className="flex flex-col items-center gap-1">
-          <Wind className="text-emerald-500" size={28} />
-          <span className="text-[22px] font-extrabold text-slate-800">12 km/h</span>
-          <span className="text-[12px] text-slate-500 font-medium">
-            {lang === 'en' ? 'Air quality' : 'Calidad Aire'}
-          </span>
-        </div>
+
+        <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-3">
+          <div className="grid grid-cols-1 gap-2.5">
+            <div className="rounded-xl bg-white p-3 border border-slate-100 flex items-center justify-between gap-3">
+              <div>
+              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-2">
+                <Thermometer size={20} className="text-emerald-600" />
+              </div>
+              <p className="text-[11px] text-slate-500">Temperatura</p>
+              </div>
+              <div className="text-right">
+              <p className="text-md font-extrabold text-slate-900">
+                {climate?.temperature ?? '--'}<span className="text-base font-semibold">°C</span>
+              </p>
+              </div>
+            </div>
+            <div className="rounded-xl bg-white p-3 border border-slate-100 flex items-center justify-between gap-3">
+              <div>
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                <Droplet size={20} className="text-blue-600" />
+              </div>
+              <p className="text-[11px] text-slate-500">pH</p>
+              </div>
+              <div className="text-right">
+              <p className="text-md font-extrabold text-slate-900">{climate?.ph ?? '--'}</p>
+              </div>
+            </div>
+            <div className="rounded-xl bg-white p-3 border border-slate-100 flex items-center justify-between gap-3">
+              <div>
+              <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mb-2">
+                <CircleDot size={20} className="text-indigo-600" />
+              </div>
+              <p className="text-[11px] text-slate-500">TDS</p>
+              </div>
+              <div className="text-right">
+              <p className="text-md font-extrabold text-slate-900">
+                {climate?.tds ?? '--'} <span className="text-sm font-semibold">ppm</span>
+              </p>
+              </div>
+            </div>
+            <div className="rounded-xl bg-white p-3 border border-slate-100 flex items-center justify-between gap-3">
+              <div>
+              <div className="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center mb-2">
+                <Waves size={20} className="text-cyan-600" />
+              </div>
+              <p className="text-[11px] text-slate-500">NTU</p>
+              </div>
+              <div className="text-right">
+              <p className="text-md font-extrabold text-slate-900">
+                {climate?.ntu ?? '--'} <span className="text-sm font-semibold">NTU</span>
+              </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 rounded-xl bg-white border border-slate-100 px-3 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                <ShieldCheck size={20} className="text-emerald-700" />
+              </div>
+              <span className="text-sm text-slate-600">Calidad del agua</span>
+            </div>
+            <span className="text-md font-extrabold text-emerald-700">
+              {climate?.quality || '--'}
+            </span>
+          </div>
+
+          {climate?.created_at && (
+            <div className="text-[11px] text-slate-500 mt-2">
+              Actualizado: {new Date(climate.created_at).toLocaleString()}
+            </div>
+          )}
+          {climateError && (
+            <div className="text-[11px] text-amber-700 mt-2">
+              No se pudo leer `climate_readings`: {climateError}
+            </div>
+          )}
         </div>
       </section>
 
       {/* Featured Card */}
       <div
-        className="relative h-56 rounded-[26px] overflow-hidden shadow-xl cursor-pointer group"
+        className="relative h-40 rounded-[26px] overflow-hidden shadow-xl cursor-pointer group"
         onClick={() => setActiveTab(AppTab.EDUCATION)}
         style={{
           backgroundImage:
@@ -402,9 +528,9 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         }}
       >
         <div className="absolute inset-0 flex flex-col justify-between p-5">
-          <div className="flex justify-between items-start">
-            <div className="max-w-[70%]">
-              <h2 className="text-white text-[26px] font-extrabold drop-shadow-sm leading-9">
+          <div className="flex justify-between items-center h-full">
+            <div className="max-w-[78%]">
+              <h2 className="text-white text-[23px] font-extrabold drop-shadow-sm leading-8">
                 {lang === 'en' ? 'Local biodiversity' : 'Biodiversidad Local'}
               </h2>
               <p className="text-white/90 text-[15px] leading-6">
@@ -413,18 +539,10 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
                   : 'Conoce las aves, plantas, anfibios e insectos del humedal.'}
               </p>
             </div>
-            <div className="flex flex-col items-center gap-1 text-lime-200/95 drop-shadow-sm">
-              <Bird size={30} />
-              <Leaf size={20} />
+            <div className="flex items-center gap-2 text-lime-200/95 drop-shadow-sm">
+              <Bird size={24} />
+              <ChevronRight size={28} className="text-white/90" />
             </div>
-          </div>
-          <div className="space-y-2">
-            <div className="w-8 h-[3px] rounded-full bg-lime-300/80" />
-            <p className="text-[12px] text-emerald-50/95">
-            {lang === 'en'
-              ? 'Tap to explore educational cards about life in the wetland.'
-              : 'Toca para explorar fichas educativas sobre la vida del humedal.'}
-            </p>
           </div>
         </div>
       </div>
@@ -477,7 +595,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       )}
 
       <section>
-        <h3 className="text-xl font-bold text-white-950 mb-3">
+        <h3 className="text-xl font-bold text-emerald-50 mb-3 ">
           {lang === 'en' ? 'Recent news' : 'Noticias Recientes'}
         </h3>
         {isAdmin && (

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Camera, MapPin, PlusCircle, AlertTriangle, X, Check, Bell, ShieldAlert, CloudSun, Wind, RefreshCw, Calendar, Share2, BarChart3, LayoutGrid, List, ChevronDown, ChevronUp, Eye, Trash2, Navigation2, Crosshair, TrendingUp, PieChart as PieChartIcon, Bird, Leaf, Edit2, Plus, Minus } from 'lucide-react';
+import { Camera, MapPin, PlusCircle, AlertTriangle, X, Check, Bell, ShieldAlert, Calendar, Share2, BarChart3, LayoutGrid, List, ChevronDown, ChevronUp, Eye, Trash2, Navigation2, Crosshair, TrendingUp, PieChart as PieChartIcon, Bird, Leaf, Edit2, Plus, Minus } from 'lucide-react';
 import L from 'leaflet';
 import { Capacitor } from '@capacitor/core';
 // Para app nativa, usar el plugin de Geolocation de Capacitor
@@ -101,7 +101,6 @@ const Monitoring: React.FC = () => {
   };
 
   useEffect(() => {
-    vm.fetchWeather();
     if (!mapContainerRef.current || mapInstanceRef.current) return;
     
     const map = L.map(mapContainerRef.current, { zoomControl: false }).setView([4.642, -74.148], 15);
@@ -514,30 +513,6 @@ const Monitoring: React.FC = () => {
         </p>
       )}
 
-      <section className="eco-forest-card text-white rounded-3xl p-5 mb-6 relative overflow-hidden">
-        <div className="relative z-10 flex flex-col gap-4">
-          <div className="flex items-center gap-2">
-            <CloudSun size={20} className="text-emerald-100" />
-            <div className="flex flex-col leading-tight">
-              <span className="text-xs font-bold uppercase tracking-widest">
-                {lang === 'en' ? 'Techo Wetland' : 'Humedal de Techo'}
-              </span>
-              <span className="text-[10px] text-emerald-100/90">
-                {lang === 'en'
-                  ? 'Estimated environmental data of the wetland'
-                  : 'Datos ambientales estimados del humedal'}
-              </span>
-            </div>
-            <button onClick={vm.fetchWeather} className={`ml-auto ${vm.loadingWeather ? 'animate-spin' : ''}`}><RefreshCw size={14}/></button>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div><span className="text-2xl font-bold">{vm.weather?.temp || '--'}°</span><p className="text-[10px] text-emerald-200">Temp</p></div>
-            <div><span className="text-2xl font-bold">{vm.weather?.humidity || '--'}%</span><p className="text-[10px] text-emerald-200">{lang === 'en' ? 'Humidity' : 'Humedad'}</p></div>
-            <div><span className="text-2xl font-bold">{vm.weather?.wind || '--'}</span><p className="text-[10px] text-emerald-200">{lang === 'en' ? 'Wind' : 'Viento'}</p></div>
-          </div>
-        </div>
-      </section>
-
       <div className="relative mb-6">
         <div className="eco-forest-card h-64 rounded-3xl relative overflow-hidden z-0">
           <div ref={mapContainerRef} className="w-full h-full" />
@@ -699,11 +674,11 @@ const Monitoring: React.FC = () => {
         </div>
 
         {totalLimited > 0 && (
-          <div className="flex items-center justify-center gap-3">
+          <div className="eco-card-soft rounded-3xl p-4 border border-white/75 shadow-[0_12px_26px_rgba(8,28,20,0.28)] flex items-center justify-center gap-3">
             <button
               onClick={() => setPage(0)}
               disabled={page === 0}
-              className="text-sm md:text-base font-extrabold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] disabled:opacity-80"
+              className="text-sm md:text-base font-extrabold text-black drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] disabled:opacity-80"
             >
               {lang === 'en' ? 'Latest reports' : 'Últimos reportes'}
             </button>

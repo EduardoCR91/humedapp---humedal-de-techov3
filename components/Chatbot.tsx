@@ -99,7 +99,7 @@ Recuerda: las pequeñas acciones de la ciudadanía ayudan a mantener vivo el hum
 
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-2 pb-40 space-y-4 no-scrollbar"
+        className="flex-1 overflow-y-auto p-2 pb-[220px] space-y-4 no-scrollbar"
       >
         {messages.map((msg, idx) => (
           <div 

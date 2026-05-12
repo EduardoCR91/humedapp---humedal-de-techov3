@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Navigation from './components/Navigation';
 import Dashboard from './components/Dashboard';
 import Monitoring from './components/Monitoring';
@@ -12,12 +12,80 @@ import { AuthProvider, useAuth } from './components/AuthContext';
 import AuthScreen from './components/AuthScreen';
 import UserProfilePanel from './components/UserProfilePanel';
 import { Menu } from 'lucide-react';
-import { NotificationProvider } from './components/NotificationContext';
+import { NotificationProvider, useNotifications } from './components/NotificationContext';
+import { supabase } from './services/supabaseClient';
 
 const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.HOME);
   const { user, loading } = useAuth();
   const [showProfilePanel, setShowProfilePanel] = useState(false);
+  const { requestPermission, notify } = useNotifications();
+  const seenNewsIdsRef = useRef<Set<string>>(new Set());
+  const seenRiskReportIdsRef = useRef<Set<string>>(new Set());
+  const seenEducationEventIdsRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    requestPermission().catch(() => undefined);
+  }, [requestPermission]);
+
+  useEffect(() => {
+    const newsChannel = supabase
+      .channel('global-news-notifications')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'news' },
+        payload => {
+          const row = payload.new as any;
+          if (!row?.id || seenNewsIdsRef.current.has(row.id)) return;
+          seenNewsIdsRef.current.add(row.id);
+          notify('Nueva noticia publicada', {
+            body: row.title ? String(row.title) : 'Hay una nueva noticia del humedal.',
+          });
+        }
+      )
+      .subscribe();
+
+    const reportsChannel = supabase
+      .channel('global-risk-reports-notifications')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'reports' },
+        payload => {
+          const row = payload.new as any;
+          if (!row?.id || seenRiskReportIdsRef.current.has(row.id)) return;
+          if (row.type !== 'emergency') return;
+          seenRiskReportIdsRef.current.add(row.id);
+          notify('Nuevo reporte de riesgo', {
+            body: row.title ? String(row.title) : 'Se registró un nuevo riesgo en el humedal.',
+          });
+        }
+      )
+      .subscribe();
+
+    const educationEventsChannel = supabase
+      .channel('global-education-events-notifications')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'education_events' },
+        payload => {
+          const row = payload.new as any;
+          if (!row?.id || seenEducationEventIdsRef.current.has(row.id)) return;
+          seenEducationEventIdsRef.current.add(row.id);
+          notify('Nuevo evento de educación ambiental', {
+            body: row.title
+              ? `${String(row.title)} · ${row.event_date ?? ''}${row.event_time ? ` ${String(row.event_time).slice(0, 5)}` : ''}`.trim()
+              : 'Se publicó un nuevo evento ambiental.',
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(newsChannel);
+      supabase.removeChannel(reportsChannel);
+      supabase.removeChannel(educationEventsChannel);
+    };
+  }, [notify]);
 
   const renderContent = () => {
     switch (activeTab) {
