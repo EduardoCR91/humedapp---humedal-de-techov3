@@ -122,9 +122,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const configuredRedirect =
       (import.meta.env.VITE_AUTH_REDIRECT_URL as string | undefined)?.trim() || '';
-    const redirectUrl = configuredRedirect || window.location.origin;
+    const redirectUrl =
+      configuredRedirect || `${window.location.origin}/confirmacion-cuenta.html`;
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -133,6 +134,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       },
     });
     if (error) return { error: error.message };
+
+    // Supabase puede devolver éxito "silencioso" cuando el correo ya existe
+    // (user con identities vacío) para evitar enumeración de cuentas.
+    const identities = (data?.user as any)?.identities as any[] | undefined;
+    if (Array.isArray(identities) && identities.length === 0) {
+      return { error: 'EMAIL_ALREADY_REGISTERED' };
+    }
 
     return {};
   };

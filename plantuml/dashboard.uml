@@ -5,7 +5,7 @@ actor "Usuario" as user
 actor "Administrador" as admin
 
 rectangle "Inicio(EcoVigia!)\n\n" {
-  usecase "Ver estado del clima" as UC_WEATHER
+  usecase "Ver datos ambientales" as UC_WEATHER
   usecase "Ver tarjeta\n\"Biodiversidad Local\"" as UC_BIODIVERSITY
   usecase "Ver noticias recientes" as UC_NEWS
   usecase "Ir a Educación" as UC_NAV_EDUCATION

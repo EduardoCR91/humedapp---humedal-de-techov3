@@ -34,6 +34,11 @@ const AuthScreen: React.FC = () => {
             lang === 'en'
               ? 'This username is already in use. Please choose a different one.'
               : 'Este nombre de usuario ya está en uso. Por favor, elige uno diferente.';
+        } else if (err === 'EMAIL_ALREADY_REGISTERED') {
+          friendly =
+            lang === 'en'
+              ? 'This email is already registered. Please sign in instead.'
+              : 'Este correo ya se encuentra registrado. Por favor, inicia sesión.';
         } else if (err === 'USERNAME_REQUIRED') {
           friendly =
             lang === 'en'
@@ -88,7 +93,8 @@ const AuthScreen: React.FC = () => {
   };
 
   return (
-    <div className="p-6 animate-fadeIn text-black">
+    <div className="p-4 animate-fadeIn text-black">
+      <div className="eco-card rounded-3xl p-5 border border-white/80 shadow-[0_12px_28px_rgba(15,23,42,0.12)]">
       <h1 className="text-2xl font-bold text-black mb-4">
         {mode === 'login'
           ? lang === 'en'
@@ -230,6 +236,7 @@ const AuthScreen: React.FC = () => {
             : 'Crear cuenta'}
         </button>
       </form>
+      </div>
     </div>
   );
 };
