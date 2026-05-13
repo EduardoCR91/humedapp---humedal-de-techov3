@@ -293,8 +293,8 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
                 </p>
                 <p className="text-[11px] text-gray-500">
                   {lang === 'en'
-                    ? 'Search by username or email to change the role.'
-                    : 'Busca por nombre de usuario o correo para cambiar el rol.'}
+                    ? 'Search by username to change the role.'
+                    : 'Busca por nombre de usuario para cambiar el rol.'}
                 </p>
               </div>
             </div>

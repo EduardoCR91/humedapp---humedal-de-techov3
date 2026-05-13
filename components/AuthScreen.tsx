@@ -179,12 +179,12 @@ const AuthScreen: React.FC = () => {
             <input
               type={showPassword ? 'text' : 'password'}
               required
-              minLength={6}
+              minLength={8}
               value={password}
               onChange={e => setPassword(e.target.value)}
               className="w-full p-3 pr-11 rounded-xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
               placeholder={
-                lang === 'en' ? 'Minimum 6 characters' : 'Mínimo 6 caracteres'
+                lang === 'en' ? 'Minimum 8 characters' : 'Mínimo 8 caracteres'
               }
             />
             <button
