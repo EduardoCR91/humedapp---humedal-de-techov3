@@ -11,6 +11,6 @@ rectangle "Chatbot\n\n" {
 user -- UC_SEND_MESSAGE
 UC_RECEIVE_MESSAGE -- user
 
-UC_SEND_MESSAGE .> (Servicio Gemini) : <<consulta>>
-UC_RECEIVE_MESSAGE .> (Servicio Gemini) : <<respuesta formateada>>
+UC_SEND_MESSAGE .> (Servicio GroqCloud) : <<consulta>>
+UC_RECEIVE_MESSAGE .> (Servicio GroqCloud) : <<respuesta formateada>>
 @enduml

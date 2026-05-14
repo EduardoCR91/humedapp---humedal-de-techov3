@@ -13,7 +13,7 @@ Container_Boundary(spa, "Aplicación Móvil (React / Vite Bundle)") {
     Component(ui_education, "Componentes Catálogo", "React Function Component", "Tarjetas (Cards) pasivas detallando ficha biológica (Flora, Anfibios, Aves).")
 
     Component(service_supabase, "Supabase Client", "TypeScript module", "Objeto singleton importando las llaves 'Anon_Key' para iniciar operaciones CRUD protegidas.")
-    Component(service_gemini, "Gemini Service", "TypeScript file", "Contiene el LLM Prompt Enginering y encapsula fallos en red.")
+    Component(service_gemini, "geminiService (Groq Client)", "TypeScript file", "Contiene el LLM Prompt Enginering y llama a Groq vía fetch.")
 
     Rel(app_router, ui_dashboard, "Renderiza base")
     Rel(app_router, ui_monitoring, "Si Autenticado, Renderiza")
@@ -26,9 +26,9 @@ Container_Boundary(spa, "Aplicación Móvil (React / Vite Bundle)") {
 }
 
 Container_Ext(database_postgres, "Base de Datos Postgre / Supabase", "Database", "Maneja Constraints y Row Level Security.")
-Container_Ext(google_api, "API de Inteligencia AI", "Google GenAI SDK", "El modelo de red neuronal remoto")
+Container_Ext(groq_api, "Groq Cloud API", "REST HTTP", "El modelo de red neuronal remoto (Llama 3)")
 
 Rel(service_supabase, database_postgres, "Conexión transparente de transporte", "REST")
-Rel(service_gemini, google_api, "Flujo streaming por conexión", "HTTPS/TLS")
+Rel(service_gemini, groq_api, "Petición POST y recepción de completion", "HTTPS/TLS")
 
 @enduml

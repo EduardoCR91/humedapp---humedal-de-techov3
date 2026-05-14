@@ -67,11 +67,48 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
     setLoading(true);
     setMessage(null);
     setError(null);
+    const cleanUsername = username.trim();
+
+    if (!cleanUsername) {
+      setError(
+        lang === 'en'
+          ? 'Please enter a username.'
+          : 'Por favor ingresa un nombre de usuario.'
+      );
+      setLoading(false);
+      return;
+    }
+
+    // Validar unicidad del nombre de usuario antes de guardar
+    try {
+      const { data: existing, error: existingError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', cleanUsername)
+        .neq('id', user.id)
+        .maybeSingle();
+
+      if (existingError) {
+        console.warn('No se pudo validar unicidad del username:', existingError.message);
+      }
+
+      if (existing) {
+        setError(
+          lang === 'en'
+            ? 'This username is already in use. Please choose a different one.'
+            : 'Este nombre de usuario ya está en uso. Elige uno diferente.'
+        );
+        setLoading(false);
+        return;
+      }
+    } catch (err) {
+      console.warn('Error validando username:', err);
+    }
 
     // Actualizar nombre de usuario en los metadatos de autenticación
     try {
       const { error: authError } = await supabase.auth.updateUser({
-        data: { username: username || null },
+        data: { username: cleanUsername || null },
       });
       if (authError) {
         setError(authError.message);
@@ -90,18 +127,34 @@ const UserProfilePanel: React.FC<UserProfilePanelProps> = ({ onClose }) => {
       .upsert(
         {
           id: user.id,
-          username: username || null,
-          display_name: username || null,
+          username: cleanUsername || null,
+          display_name: cleanUsername || null,
         },
         { onConflict: 'id' }
       );
 
     if (upsertError) {
-      console.warn('No se pudo guardar el perfil en profiles:', upsertError.message);
-      // Pero al menos los metadatos de auth ya quedaron actualizados
-      setMessage('Nombre de usuario actualizado (datos de acceso).');
+      const lower = (upsertError.message || '').toLowerCase();
+      if (lower.includes('duplicate key') || lower.includes('unique')) {
+        setError(
+          lang === 'en'
+            ? 'This username is already in use. Please choose a different one.'
+            : 'Este nombre de usuario ya está en uso. Elige uno diferente.'
+        );
+      } else {
+        setError(
+          lang === 'en'
+            ? 'The username could not be updated. Please try again.'
+            : 'No se pudo actualizar el nombre de usuario. Intenta de nuevo.'
+        );
+      }
     } else {
-      setMessage('Perfil actualizado correctamente.');
+      setUsername(cleanUsername);
+      setMessage(
+        lang === 'en'
+          ? 'Username updated successfully.'
+          : 'Nombre de usuario actualizado correctamente.'
+      );
     }
 
     setLoading(false);

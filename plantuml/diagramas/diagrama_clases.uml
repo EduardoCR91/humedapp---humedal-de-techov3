@@ -45,8 +45,8 @@ package "Models & Services" {
         + coords: [number, number]
         + imageUrl: string
     }
-    class GeminiService {
-        + getGeminiResponse(prompt): string
+    class GroqServices {
+        + GetLLM Response(prompt): string
     }
     class LeafletMap {
         + setView()
@@ -61,7 +61,7 @@ App "1" *-- "1" ChatbotView
 
 MonitoringView ..> useMonitoringViewModel : uses
 ParticipationView ..> useParticipationViewModel : uses
-ChatbotView ..> GeminiService : communicates
+ChatbotView ..> GroqServices : communicates
 useMonitoringViewModel "1" *-- "many" Report
 MonitoringView ..> LeafletMap : manages
 @enduml

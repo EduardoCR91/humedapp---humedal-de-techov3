@@ -19,7 +19,7 @@ package "External Libraries" {
 }
 
 cloud "External Services" {
-    [Google Gemini API] as Gemini
+    [Groq Cloud API (Llama 3)] as Groq
     [OpenStreetMap Tiles] as OSM
 }
 
@@ -29,7 +29,7 @@ App --> Soc
 App --> Bot
 Mon ..> L
 Mon ..> OSM
-Bot ..> Gemini
+Bot ..> Groq
 App ..> Icons
 App ..> CSS
 @enduml

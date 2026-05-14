@@ -50,22 +50,21 @@ package "2. Capa de Transferencia en TypeScript (types.ts) DTOs" {
     class UserProfile <<Record>> {
         + name: string
         + bio: string
-        + avatar: string
-        + level: string
         + reportsCount: numeric
-        + points: numeric
+        + likes: numeric
     }
     
-    class GeminiPayload <<Interface>> {
-        + queryText : string
-        + contextRules: string
+    class GroqPayload <<Interface>> {
+        + model : string
+        + temperature: numeric
+        + messages: array[object]
     }
 
 }
 
 ' Relaciones descendentes para forzar verticalidad
 Monitoring ---> EnvironmentalReport : "  Instancia DTO previo envío  "
-Chatbot ---> GeminiPayload : "  Inicializa estructura abstracta  "
+Chatbot ---> GroqPayload : "  Inicializa estructura abstracta  "
 
 Monitoring ---> ClientSupa : "  ejecuta submitReportData pasándole data\n  segura hacia el bucket y DB  "
 

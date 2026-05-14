@@ -8,7 +8,7 @@ Person(administrador, "Colectivo / Administrador", "Encargado de la validación 
 
 System(ecovigia, "EcoVigia (Sistema Central)", "Aplicación móvil y plataforma base para el registro de denuncias ambientales, visualización de indicadores IoT y divulgación botánica/histórica.")
 
-System_Ext(gemini, "API de Inteligencia Artificial", "Google Gemini. Provee las capacidades conversacionales para el chatbot ambiental (HumedBot).")
+System_Ext(groq, "Groq Cloud API", "Llama 3. Provee las capacidades conversacionales para el chatbot ambiental (EcoBot).")
 System_Ext(supabase, "Plataforma Backend (Supabase)", "Data warehouse externo operando sobre PostgreSQL que centraliza la identidad, mapas relacionales y bóveda de imágenes masivas.")
 System_Ext(osm, "Proveedores de Cartografía", "OpenStreetMap (mediante Leaflet). Red remota de mapas base geográficos.")
 
@@ -16,7 +16,7 @@ Rel(ciudadano, ecovigia, "Reporta incidentes, fotografía aves y aprende iterati
 Rel(administrador, ecovigia, "Gestiona e incide políticamente basándose en", "Métricas del Sistema")
 
 Rel(ecovigia, supabase, "Escribe y lee telemetría asíncrona, sincroniza usuarios con", "REST / WebSockets")
-Rel(ecovigia, gemini, "Aumenta la educación generando prompts hacia", "HTTPS")
+Rel(ecovigia, groq, "Aumenta la educación generando prompts hacia", "HTTPS")
 Rel(ecovigia, osm, "Carga mosaicos vectoriales topográficos desde", "HTTPS API")
 
 @enduml

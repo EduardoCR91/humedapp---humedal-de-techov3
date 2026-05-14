@@ -33,7 +33,7 @@ else (Sí)
 endif
 
 note right: **HOME**
-:Cargar mapa, estadísticas\ny clima con Gemini AI;
+:Cargar mapa, estadísticas\ny clima con Groq AI;
 
 :Usuario selecciona una vista\ndel menú de navegación;
 
@@ -58,7 +58,7 @@ note right: **CULTURE**
 :Explorar artículos,\neventos y galería del humedal;
 
 note right: **CHAT**
-:Enviar consulta a Gemini AI\ny recibir respuesta;
+:Enviar consulta a Groq AI\ny recibir respuesta;
 
 if (¿Cerrar sesión?) then (Sí)
   :Supabase cierra sesión;

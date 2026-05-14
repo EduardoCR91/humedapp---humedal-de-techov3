@@ -10,7 +10,7 @@ rectangle "Panel de Perfil de Usuario\n\n" {
   usecase "Cerrar panel de perfil" as UC_CLOSE_PANEL
   usecase "Cerrar sesión" as UC_SIGN_OUT
 
-  usecase "Buscar usuarios\npor nombre o correo" as UC_SEARCH_USERS
+  usecase "Buscar usuarios\npor nombre" as UC_SEARCH_USERS
   usecase "Cambiar rol de usuario\n(usuario ↔ admin)" as UC_CHANGE_ROLE
 }
 

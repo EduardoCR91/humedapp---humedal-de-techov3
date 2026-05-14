@@ -19,9 +19,9 @@ node "Dispositivo Móvil Ciudadano" <<Android OS 7.0+>> {
   SPA -.-> Camera : "Inicia Captura Binaria"
 }
 
-cloud "Nube de Procesamiento Cognitivo (Google Cloud)" as GCP {
-  node "Google Vertex AI / Generative Language API" {
-     [Modelo Base: Gemini LLM] as LLM
+cloud "Nube de Procesamiento Cognitivo (Groq Cloud)" as GroqCloud {
+  node "Groq API (Llama 3)" {
+     [Modelo Base: Llama 3 (Groq)] as LLM
   }
 }
 
@@ -50,5 +50,5 @@ cloud "Ecosistema Backend (Instancia Supabase - AWS)" as SupabasePlatform {
 
 ' Relaciones de Tráfico de Red (Externas)
 SPA ====> Kong : "Conexiones Asíncronas REST/WebSockets sobre HTTPS (TLS)"
-SPA ...> LLM : "Consultas vía REST SDK (@google/genai) vía HTTPS"
+SPA ...> LLM : "Consultas vía API REST (Groq) vía HTTPS"
 @enduml
