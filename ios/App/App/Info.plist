@@ -2,12 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CAPACITOR_DEBUG</key>
+	<key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>Humedales-app</string>
+	<string>Humedales-app</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -24,16 +24,20 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
 	<key>NSCameraUsageDescription</key>
 	<string>EcoVigia necesita acceso a la cámara para tomar fotos de reportes ambientales.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>EcoVigia necesita acceso a tus fotos para adjuntar imágenes en reportes y noticias.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>EcoVigia puede guardar evidencia fotográfica de reportes cuando tú lo solicites.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>EcoVigia necesita tu ubicación para ubicar y registrar reportes en el mapa del humedal.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>EcoVigia puede guardar evidencia fotográfica de reportes cuando tú lo solicites.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>EcoVigia necesita acceso a tus fotos para adjuntar imágenes en reportes y noticias.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>

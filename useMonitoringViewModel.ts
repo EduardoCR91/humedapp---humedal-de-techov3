@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { EnvironmentalReport, WeatherData } from './types';
 import { getWetlandWeather } from './services/geminiService';
 import { supabase } from './services/supabaseClient';
+import { sendPushTrigger } from './services/pushNotifications';
 
 const buildReportPlaceholder = (type: 'fauna' | 'flora' | 'emergency') => {
   const config =
@@ -171,6 +172,15 @@ export const useMonitoringViewModel = () => {
             r.id === localId ? { ...r, remoteId: data.id as string } : r
           )
         );
+
+        if (report.type === 'emergency') {
+          sendPushTrigger({
+            type: 'risk_report',
+            title: 'Nuevo reporte de riesgo',
+            body: report.title || 'Se registró un nuevo riesgo en el humedal.',
+            recordId: String(data.id),
+          }).catch(() => undefined);
+        }
       }
     })();
 

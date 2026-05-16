@@ -14,6 +14,7 @@ import UserProfilePanel from './components/UserProfilePanel';
 import { Menu } from 'lucide-react';
 import { NotificationProvider, useNotifications } from './components/NotificationContext';
 import { supabase } from './services/supabaseClient';
+import { registerAndroidPushToken } from './services/pushNotifications';
 
 const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.HOME);
@@ -27,6 +28,11 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     requestPermission().catch(() => undefined);
   }, [requestPermission]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    registerAndroidPushToken(user.id).catch(() => undefined);
+  }, [user?.id]);
 
   useEffect(() => {
     const newsChannel = supabase

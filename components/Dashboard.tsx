@@ -20,6 +20,7 @@ import {
 import { supabase } from '../services/supabaseClient';
 import { useAuth } from './AuthContext';
 import { useLanguage } from './LanguageContext';
+import { sendPushTrigger } from '../services/pushNotifications';
 
 interface DashboardProps {
   setActiveTab: (tab: AppTab) => void;
@@ -340,6 +341,15 @@ const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       setEditingNewsId(null);
       if (fileInputCameraRef.current) fileInputCameraRef.current.value = '';
       if (fileInputGalleryRef.current) fileInputGalleryRef.current.value = '';
+
+      if (!editingNewsId) {
+        sendPushTrigger({
+          type: 'news',
+          title: 'Nueva noticia en EcoVigia',
+          body: newItem.title || 'Se publicó una nueva noticia del humedal.',
+          recordId: String(newItem.id),
+        }).catch(() => undefined);
+      }
     } else if (error) {
       alert(
         lang === 'en'

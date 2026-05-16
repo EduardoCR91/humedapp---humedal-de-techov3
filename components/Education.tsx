@@ -18,6 +18,7 @@ import { supabase } from '../services/supabaseClient';
 import { useAuth } from './AuthContext';
 import { useNotifications } from './NotificationContext';
 import { useNetworkStatus } from './useNetworkStatus';
+import { sendPushTrigger } from '../services/pushNotifications';
 
 interface EducationEvent {
   id: string;
@@ -268,6 +269,12 @@ const Education: React.FC = () => {
 
       if (isNewEvent) {
         notifiedEventIdsRef.current.add(newEvent.id);
+        sendPushTrigger({
+          type: 'education_event',
+          title: 'Nuevo evento de educación ambiental',
+          body: newEvent.title || 'Se publicó un nuevo evento ambiental.',
+          recordId: newEvent.id,
+        }).catch(() => undefined);
       }
     } else if (error) {
       alert(`No se pudo guardar el evento: ${error.message ?? 'Error desconocido'}`);
