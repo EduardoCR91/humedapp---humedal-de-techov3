@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "181051636555",
+    "project_id": "ecovigia-84110",
+    "storage_bucket": "ecovigia-84110.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:181051636555:android:d97dc03517b4c5f94506ce",
+        "android_client_info": {
+          "package_name": "com.ecovigia.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh8p87mLbfqH8oaoFurITt4NO0k-wxIuw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
